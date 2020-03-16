@@ -3,7 +3,6 @@ import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
 import json
-import geopandas as gpd
 import matplotlib.pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
@@ -21,7 +20,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 df = pd.read_csv('geodata/postzone.csv')
 
-with open('D://Github//StadAntwerp//geodata//postzone.json') as json_file:
+with open('geodata/postzone.json') as json_file:
     data = json.load(json_file)
 
 fig = px.choropleth_mapbox(data_frame=df, geojson=data, color='naam',
