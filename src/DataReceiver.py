@@ -53,6 +53,7 @@ class DataReceiver:
                    'fietsenstallingen', 'plaatsen_fietsenstallingen', 'sportterreinen', 'speelterreinen',
                    'opp_sportterreinen', 'opp_gebruiksgroen_en_pleinen',
                    'opp_speelterreinen', 'plaatsen_velo_stations', 'velo_stations']
+
     def get_geo_data(self):
         ctx = snowflake.connector.connect(
             user='YNOWICKI',
@@ -62,6 +63,7 @@ class DataReceiver:
             role='MOBILITY_ANTWERP',
             database='DEMO_ANTWERP_CITY')
         cs = ctx.cursor()
+
         def link(postcode):
             links = {
                 1: 2000,
@@ -82,6 +84,7 @@ class DataReceiver:
             for k, v in links.items():
                 if postcode == v:
                     return k
+
         cs.execute(self.DF_QUERY)
         data = cs.fetchall()
 
@@ -112,9 +115,6 @@ class DataReceiver:
         cs.execute(self.INPUT_QUERY)
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=self.COLUMNS)
-        output = df['regelmatig_de_fiets_naar_werk_school']
-        output = output.str.replace(',', '.')
-        output = pd.to_numeric(output)
         df = df.drop(['tevredenheid_staat_wegen', 'tevreden_met_fiets_en_voetpaden',
                       'voldoende_bussen_trams', 'voldoende_parkeerplaatsen_voor_bewoners'], axis=1)
         for col in self.COLS_CHANGED:
