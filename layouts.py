@@ -3,9 +3,11 @@ import dash_html_components as html
 import plotly.express as px
 import plotly.graph_objects as go
 from df_calls import DataCalls
+from snow_calls import SnowFlakeCalls
 import callbacks
 
 dc = DataCalls()
+snow = SnowFlakeCalls()
 fig = callbacks.initialize_map()
 
 border_style = {'padding': '2px','border': '1px solid'}
@@ -21,7 +23,7 @@ main = html.Div(children=[
     html.Div(children=[
         html.Button('Predict', id='btn-predictie'),
         dcc.Dropdown(id='choose-postcode',
-                     options=[{'label': i[0], 'value': i[0]} for i in dc.get_dropdown_data()],
+                     options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
                      value=2000),
         html.Div(children=[
 

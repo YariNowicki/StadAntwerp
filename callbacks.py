@@ -1,4 +1,3 @@
-
 from dash.dependencies import Input, Output, State
 import pandas as pd
 import dash_core_components as dcc
@@ -65,7 +64,6 @@ def update_choropleth_mapbox_prediction(*vals):
     if vals[0] is not None:
         # Load prediction model
         model = load_model('model/DashModel.h5')
-        print(vals)
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
             inputs.append(v)

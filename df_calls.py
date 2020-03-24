@@ -20,7 +20,6 @@ class DataCalls:
 
     def get_dropdown_data(self):
         df_drop = self.df.copy()
-        df_drop = df_drop.dropna(axis = 0, how ='any')
         df_drop = df_drop.drop(['Unnamed: 0'], axis=1)
         df_drop = df_drop[df_drop['jaar'] == 2017].dropna(axis=0, how='any')
         out = []
@@ -35,7 +34,6 @@ class DataCalls:
             if int(df_inp_werk.loc[i]['postcode']) == int(postcode):
                 out.loc[i] = df_inp_werk.loc[i]
         out = out.drop(['Unnamed: 0'], axis=1)
-        out = out.dropna(axis=0)
         return out.iloc[-1]
 
     def get_postcodes(self):
