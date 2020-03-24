@@ -59,7 +59,8 @@ class Columns:
                        'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen',
                        'plaatsen_velo_stations']
 
-    min_max_columns_input = ["werk-slider-0",
+    min_max_columns_input = ["choose-postcode",
+                             "werk-slider-0",
                              "werk-slider-1",
                              "werk-slider-2",
                              "werk-slider-3",

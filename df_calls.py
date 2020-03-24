@@ -7,12 +7,16 @@ from columns import Columns
 class DataCalls:
     df = pd.read_csv('data/df_avg.csv')
     inputs = df[Columns.min_max_columns]
-    print(len(Columns.min_max_columns))
     min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1))  # puts everything in a range between 0 and 1
     min_max_scaler.fit(inputs)
 
     def __init__(self):
         pass
+
+    def get_input_data(self):
+        df_inp = self.df.copy()
+        df_inp = df_inp[df_inp['jaar'] == 2017].dropna(axis=0, how='any')
+        return df_inp
 
     def get_dropdown_data(self):
         df_drop = self.df.copy()
@@ -40,6 +44,5 @@ class DataCalls:
         return out
 
     def transfrom(self, inp):
-        print(len(inp))
         return self.min_max_scaler.transform([inp])
 

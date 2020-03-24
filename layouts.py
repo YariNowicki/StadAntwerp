@@ -9,8 +9,9 @@ dc = DataCalls()
 fig = callbacks.initialize_map()
 
 border_style = {'padding': '2px','border': '1px solid'}
-input_div_style = {'float': 'left', 'width': '30%', 'height': '750px','overflow-y': 'scroll', 'margin': '10px'}
-
+input_div_style = {'float': 'left', 'width': '30%','height': '750px',
+         'overflow-y': 'scroll',
+         'margin': '10px'}
 main = html.Div(children=[
     html.H1(id='title',
         children='Demo Antwerpen',
@@ -18,11 +19,12 @@ main = html.Div(children=[
             'text-align': 'center',
             'font-size': '300%'}),
     html.Div(children=[
-        html.Button('Predict', id='btn_prediction', style={'float': 'left'}),
+        html.Button('Predict', id='btn-predictie'),
         dcc.Dropdown(id='choose-postcode',
                      options=[{'label': i[0], 'value': i[0]} for i in dc.get_dropdown_data()],
                      value=2000),
         html.Div(children=[
+
             html.Div(children=[
                 html.Div(id='inp-werk',children=[
                     html.P("loontrekkenden %"),
@@ -34,11 +36,11 @@ main = html.Div(children=[
                     html.P("Inactieven %"),
                     dcc.Slider(id='werk-slider-3',min=0,max=1,step=0.01)
                 ], style=border_style),
-                html.Div(id='inp-belastingen', children=[
+                html.Div(id='inp-belastingen-plichtigen', children=[
                     html.P("Belastingplichtigen %"),
                     dcc.Slider(id='belast-slider-0',min=0,max=1,step=0.01),
                 ], style=border_style),
-                html.Div(id='inp-belasting-plichtigen',children=[
+                html.Div(id='inp-belasting',children=[
                     html.P("Gemiddeld netto belastbaar inkomen"),
                     dcc.Input(id='belast-input-0',type='number'),
                     html.P("Opbrengst personenbelasting per persoon"),
@@ -94,21 +96,21 @@ main = html.Div(children=[
                 ], style=border_style),
                 html.Div(id='inp-enq', children=[
                     html.P("Bibliotheek bezocht %"),
-                    dcc.Slider(id='enq-slider-0', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-0', min=0, max=100, step=0.01),
                     html.P("Boek gelezen %"),
-                    dcc.Slider(id='enq-slider-1', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-1', min=0, max=100, step=0.01),
                     html.P("Museum bezocht %"),
-                    dcc.Slider(id='enq-slider-2', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-2', min=0, max=100, step=0.01),
                     html.P("Park bezocht %"),
-                    dcc.Slider(id='enq-slider-3', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-3', min=0, max=100, step=0.01),
                     html.P("Restaurant of café bezocht %"),
-                    dcc.Slider(id='enq-slider-4', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-4', min=0, max=100, step=0.01),
                     html.P("Televisie gekeken %"),
-                    dcc.Slider(id='enq-slider-5', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-5', min=0, max=100, step=0.01),
                     html.P("Voorstelling bezocht %"),
-                    dcc.Slider(id='enq-slider-6', min=0, max=1, step=0.01),
+                    dcc.Slider(id='enq-slider-6', min=0, max=100, step=0.01),
                     html.P("Sport beoefend %"),
-                    dcc.Slider(id='enq-slider-7', min=0, max=1, step=0.01)
+                    dcc.Slider(id='enq-slider-7', min=0, max=100, step=0.01)
                 ], style=border_style),
                 html.Div(id='inp-plaatsen', children=[
                     html.P("Plaatsen buurtparkings"),
@@ -134,5 +136,6 @@ main = html.Div(children=[
     html.Div(
         dcc.Graph(id='predicties', figure=fig),
         style={'float': 'left'}
-    )
+    ),
+
 ])
