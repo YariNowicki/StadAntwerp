@@ -91,9 +91,9 @@ class Columns:
                              "so-slider-0",
                              "so-slider-1",
                              "kotdichtheid-input-0",
-                             "plaatsen-slider-0",
-                             "plaatsen-slider-1",
+                             "plaatsen-input-0",
+                             "plaatsen-input-1",
                              "opp-slider-0",
                              "opp-slider-1",
                              "opp-slider-2",
-                             "plaatsen-slider-2"]
+                             "plaatsen-input-2"]

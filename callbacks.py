@@ -1,3 +1,4 @@
+
 from dash.dependencies import Input, Output, State
 import pandas as pd
 import dash_core_components as dcc
@@ -32,6 +33,58 @@ def create_map(df_pred):
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     return fig
 
+
+#  Predictions
+@app.callback(Output('predicties', 'figure'),
+              [Input('btn-prediction', 'n_clicks')],
+              [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
+def update_choropleth_mapbox_prediction(*vals):
+    # Load prediction model
+    model = load_model('model/DashModel.h5')
+    postcodes = dc.get_postcodes()
+    input_df = pd.DataFrame(columns=Columns.min_max_columns)  # Creates a DataFrame with input columns + postcode column
+    # input_df['postcode'] = postcodes # Fills up the DataFrame with postcodes, so the amount of rows are correct
+    inputs = []  # Placeholder to later place the list as a row in the DataFrame
+    for v in vals[1:]:  # Loops over all the inputs and converts them to a single list
+        inputs.append(v)
+    print(inputs)
+    inputs = dc.transfrom(inputs)
+    print(inputs[0].tolist())
+    row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
+    #row_df['postcode'] = vals[0]
+    # row_df = row_df[Columns.input_columns]
+    for i in range(len(postcodes)):  # Loops over all the DataFrame rows so each one gets filled
+        input_df = input_df.append(row_df)
+    input_df['postcode'] = postcodes
+    input_df = input_df[Columns.input_columns]
+    # input_df = input_df.drop(['postcode'], axis=1) # Replaces the placeholder with the actual postcode
+    preds = model.predict(input_df.values)  # Predicts for each postcode
+    df_pred['fiets_naar_werk_school'] = preds
+
+    # Generates map with the prediction values
+    fig = create_map(df_pred)
+
+    return fig
+
+
+@app.callback()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 def create_work_slider(text, number, inp):
     return html.Div(
         id='inp-werk-container-{}'.format(number),
@@ -402,52 +455,4 @@ def opp_inp(_, postcode, inputs):
         div = create_opp_slider(c, len(inputs), inp[c])
         inputs.append(div)
     return inputs
-
-
-#  Predictions
-@app.callback(Output('predicties', 'figure'),
-                [Input("{}".format(_), "value") for _ in Columns.min_max_columns_input])
-def update_choropleth_mapbox_prediction(*vals):
-    # Load prediction model
-    model = load_model('model/DashModel.h5')
-    postcodes = dc.get_postcodes()
-    input_df = pd.DataFrame(columns=Columns.min_max_columns)  # Creates a DataFrame with input columns + postcode column
-    # input_df['postcode'] = postcodes # Fills up the DataFrame with postcodes, so the amount of rows are correct
-    inputs = []  # Placeholder to later place the list as a row in the DataFrame
-    for v in vals:  # Loops over all the inputs and converts them to a single list
-        inputs.append(v)
-    print(inputs)
-    inputs = dc.transfrom(inputs)
-    print(inputs[0].tolist())
-    row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
-    #row_df['postcode'] = vals[0]
-    # row_df = row_df[Columns.input_columns]
-    for i in range(len(postcodes)):  # Loops over all the DataFrame rows so each one gets filled
-        input_df = input_df.append(row_df)
-    input_df['postcode'] = postcodes
-    input_df = input_df[Columns.input_columns]
-    # input_df = input_df.drop(['postcode'], axis=1) # Replaces the placeholder with the actual postcode
-    preds = model.predict(input_df.values)  # Predicts for each postcode
-    df_pred['fiets_naar_werk_school'] = preds
-
-    # Generates map with the prediction values
-    fig = create_map(df_pred)
-
-    return fig
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''
