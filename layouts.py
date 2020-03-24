@@ -2,63 +2,54 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
-import src.DataReceiver as Dr
-from src.Main import Main
+from df_calls import DataCalls
+import callbacks
 
-m = Main()
-snow = Dr.DataReceiver()
-df, d = snow.get_geo_data()
-px.set_mapbox_access_token(m.mapbox_token)
+dc = DataCalls()
+fig = callbacks.initialize_map()
 
-# Create map
-display_fig = go.Figure(m.create_choropleth_mapbox(df, d))
+border_style = {'padding': '2px','border': '1px solid'}
 
-main = html.Div(
-    children=[
-        html.H1(
-            children='Demo Antwerpen',
-            style={
-                'text-align': 'center',
-                'font-size': '300%'}),
+main = html.Div(children=[
+    html.H1(id='title',
+        children='Demo Antwerpen',
+        style={
+            'text-align': 'center',
+            'font-size': '300%'}),
+    html.Div(children=[
+        dcc.Dropdown(id='choose-postcode',
+                     options=[{'label': i[0], 'value': i[0]} for i in dc.get_dropdown_data()],
+                     value=2000)
+        ,
+        html.Div(children=[
+            html.Div(children=[
+                html.Div(id='inp-werk',children=[], style=border_style),
+                html.Div(id='inp-belastingen', children=[], style=border_style),
+                html.Div(id='inp-belasting-plichtigen',children=[], style=border_style),
+                html.Div(id='inp-dichtheid', children=[], style=border_style),
+                html.Div(id='inp-secundair', children=[], style=border_style),
+                html.Div(id='inp-vertraging', children=[], style=border_style),
+                html.Div(id='inp-stroom', children=[], style=border_style),
+                html.Div(id='inp-basis-a', children=[], style=border_style),
+                html.Div(id='inp-so-a', children=[], style=border_style),
+                html.Div(id='inp-kot', children=[], style=border_style),
+                html.Div(id='inp-enq', children=[], style=border_style),
+                html.Div(id='inp-plaatsen', children=[], style=border_style),
+                html.Div(id='inp-opp', children=[], style=border_style)
+                ])
+            ],style={
+                'height': '750px',
+                'overflow-y': 'scroll',
+                'margin': '1px'}),
+    ],style={
+         'float': 'left',
+         'width': '30%',
+         'height': '750px',
+         'overflow-y': 'scroll',
+         'margin': '10px'}),
+    html.Div(
+        dcc.Graph(id='predicties', figure=fig),
+        style={'float': 'left'}
+    ),
 
-        dcc.Dropdown(id='add-input',
-            options=[
-                {'label': '2018', 'value': 2018},
-                {'label': '2017', 'value': 2017},
-                {'label': '2016', 'value': 2016}],
-            value=2018, style={ 'visibility': 'hidden'}),
-
-        html.Hr(
-            style={
-                'display': 'block',
-                'margin-bottom': '0.5em',
-                'margin-left': 'auto',
-                'margin-right': 'auto',
-                'border-style': 'inset',
-                'border-width': '1px'}),
-
-        html.Div(id='inputs',
-                 children=[],
-                 style={
-                     'float': 'left',
-                     'width': '30%',
-                     'height': '750px',
-                     'overflow-y': 'scroll',
-                     'margin': '10px'}),
-
-        html.Div(
-            dcc.Graph(id='predicties'),
-            style={'float': 'left'}
-        ),
-
-        html.Div(
-            dcc.Graph(id='districten',
-                      figure=display_fig,
-                      style={
-                        'width': '30%',
-                        'float': 'right'})
-        )
-
-    ],
-    style={'height': '100%'})
+])
