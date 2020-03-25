@@ -83,28 +83,49 @@ def update_choropleth_mapbox_prediction(*vals):
         return initialize_map()
 
 
-
-
-# Fill inputs
-
+# Aantal loontrekkenden
 @app.callback(Output('werk-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.werk[0]]
 
+
+@app.callback(Output('werk-0','children'),
+              [Input('werk-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Loontrekkenden: {}%".format(val)
+
+
+# Aantal werkzoekenden
 @app.callback(Output('werk-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.werk[1]]
 
+
+@app.callback(Output('werk-1','children'),
+              [Input('werk-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Werkzoekenden: {}%".format(val)
+
+
+# Aantal zelfstandigen
 @app.callback(Output('werk-slider-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.werk[2]]
 
+
+@app.callback(Output('werk-2','children'),
+              [Input('werk-slider-2', 'value')])
+def fill_werk_inputs(val):
+    return "Zelfstandigen: {}%".format(val)
+
+
+# Inactieven
 @app.callback(Output('werk-slider-3','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -112,19 +133,35 @@ def fill_werk_inputs(postcode):
     return df[Columns.werk[3]]
 
 
+@app.callback(Output('werk-3','children'),
+              [Input('werk-slider-3', 'value')])
+def fill_werk_inputs(val):
+    return "Inactieven: {}%".format(val)
 
+
+# Belastingplichtigen
 @app.callback(Output('belast-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_belast_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.belastingplichtigen[0]]
 
+
+@app.callback(Output('belastplicht-0','children'),
+              [Input('belast-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Belastingplichtigen: {}%".format(val)
+
+
+# Gemiddeld netto belastbaar inkomen
 @app.callback(Output('belast-input-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_belast_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.belasting[0]]
 
+
+# Opbrengst personenbelasting per persoon
 @app.callback(Output('belast-input-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_belast_inputs(postcode):
@@ -132,7 +169,7 @@ def fill_belast_inputs(postcode):
     return df[Columns.belasting[1]]
 
 
-
+# Dichtheid
 @app.callback(Output('dichtheid-input-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_dichtheid_inputs(postcode):
@@ -140,37 +177,76 @@ def fill_dichtheid_inputs(postcode):
     return df[Columns.dichtheid[0]]
 
 
-
+# AS0
 @app.callback(Output('secundair-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.secundair[0]]
 
+@app.callback(Output('so-0','children'),
+              [Input('secundair-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen ASO: {}%".format(val)
+
+
+# BSO
 @app.callback(Output('secundair-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.secundair[1]]
 
+
+@app.callback(Output('so-1','children'),
+              [Input('secundair-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen BSO: {}%".format(val)
+
+
+# KSO
 @app.callback(Output('secundair-slider-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.secundair[2]]
 
+
+@app.callback(Output('so-2','children'),
+              [Input('secundair-slider-2', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen KSO: {}%".format(val)
+
+
+# TSO
 @app.callback(Output('secundair-slider-3','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.secundair[3]]
 
+
+@app.callback(Output('so-3','children'),
+              [Input('secundair-slider-3', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen TSO: {}%".format(val)
+
+
+# Deeltijds BSO
 @app.callback(Output('secundair-slider-4','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.secundair[4]]
 
+
+@app.callback(Output('so-4','children'),
+              [Input('secundair-slider-4', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen deeltijds BSO: {}%".format(val)
+
+
+# BUSO
 @app.callback(Output('secundair-slider-5','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -178,19 +254,41 @@ def fill_werk_inputs(postcode):
     return df[Columns.secundair[5]]
 
 
+@app.callback(Output('so-5','children'),
+              [Input('secundair-slider-5', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen BUSO: {}%".format(val)
 
+
+# Geen vertraging
 @app.callback(Output('vertraging-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.vertraging[0]]
 
+
+@app.callback(Output('vertraging-0','children'),
+              [Input('vertraging-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen zonder vertraging: {}%".format(val)
+
+
+# Leerlingen met 1 jaar vertraging
 @app.callback(Output('vertraging-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.vertraging[1]]
 
+
+@app.callback(Output('vertraging-1','children'),
+              [Input('vertraging-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen met 1 jaar vertraging: {}%".format(val)
+
+
+# Leerlingen meerdere jaren vertraging
 @app.callback(Output('vertraging-slider-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -198,12 +296,27 @@ def fill_werk_inputs(postcode):
     return df[Columns.vertraging[2]]
 
 
+@app.callback(Output('vertraging-2','children'),
+              [Input('vertraging-slider-2', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen meerdere jaren vertraging: {}%".format(val)
+
+
+# Leerlingen A-stroom
 @app.callback(Output('stroom-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.stroom[0]]
 
+
+@app.callback(Output('stroom-0','children'),
+              [Input('stroom-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen A-stroom: {}%".format(val)
+
+
+# Leerlingen B-stroom
 @app.callback(Output('stroom-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -211,13 +324,27 @@ def fill_werk_inputs(postcode):
     return df[Columns.stroom[1]]
 
 
+@app.callback(Output('stroom-1','children'),
+              [Input('stroom-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen B-stroom: {}%".format(val)
 
+
+# Leerlingen die naar een basisschool gaan binnen Antwerpen
 @app.callback(Output('basis-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.basis[0]]
 
+
+@app.callback(Output('basis-0','children'),
+              [Input('basis-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(val)
+
+
+# Leerlingen die naar een basisschool gaan buiten Antwerpen
 @app.callback(Output('basis-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -225,13 +352,27 @@ def fill_werk_inputs(postcode):
     return df[Columns.basis[1]]
 
 
+@app.callback(Output('basis-1','children'),
+              [Input('basis-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen die naar een basisschool gaan buiten Antwerpen: {}%".format(val)
 
+
+# Leerlingen die naar een secundaire school gaan binnen Antwerpen %
 @app.callback(Output('so-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.so[0]]
 
+
+@app.callback(Output('so-a-0','children'),
+              [Input('so-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen die naar een secundaire school gaan binnen Antwerpen: {}%".format(val)
+
+
+# Leerlingen die naar een secundaire school gaan buiten Antwerpen %
 @app.callback(Output('so-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -239,6 +380,13 @@ def fill_werk_inputs(postcode):
     return df[Columns.so[1]]
 
 
+@app.callback(Output('so-a-1','children'),
+              [Input('so-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Leerlingen die naar een secundaire school gaan buiten Antwerpen: {}%".format(val)
+
+
+#  Kotdichtheid
 @app.callback(Output('kotdichtheid-input-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -246,49 +394,110 @@ def fill_werk_inputs(postcode):
     return df[Columns.kot[0]]
 
 
+@app.callback(Output('kot-0','children'),
+              [Input('kotdichtheid-input-0', 'value')])
+def fill_werk_inputs(val):
+    return "Kotdichtheid: {}%".format(val)
 
+
+# Bibliotheek bezocht
 @app.callback(Output('enq-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[0]]
 
+
+@app.callback(Output('enq-0','children'),
+              [Input('enq-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Bibliotheek bezocht: {}%".format(val)
+
+
+# Boek gelezen
 @app.callback(Output('enq-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[1]]
 
+
+@app.callback(Output('enq-1','children'),
+              [Input('enq-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Boek gelezen: {}%".format(val)
+
+
+# Museum bezocht
 @app.callback(Output('enq-slider-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[2]]
 
+
+@app.callback(Output('enq-2','children'),
+              [Input('enq-slider-2', 'value')])
+def fill_werk_inputs(val):
+    return "Museum bezocht: {}%".format(val)
+
+# Park bezocht
 @app.callback(Output('enq-slider-3','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[3]]
 
+
+@app.callback(Output('enq-3','children'),
+              [Input('enq-slider-3', 'value')])
+def fill_werk_inputs(val):
+    return "Park bezocht: {}%".format(val)
+
+
+# Restaurant of café bezocht
 @app.callback(Output('enq-slider-4','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[4]]
 
+
+@app.callback(Output('enq-4','children'),
+              [Input('enq-slider-4', 'value')])
+def fill_werk_inputs(val):
+    return "Restaurant of café bezocht: {}%".format(val)
+
+
+# Televisie gekeken
 @app.callback(Output('enq-slider-5','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[5]]
 
+
+@app.callback(Output('enq-5','children'),
+              [Input('enq-slider-5', 'value')])
+def fill_werk_inputs(val):
+    return "Televisie gekeken: {}%".format(val)
+
+
+# Voorstelling bezocht
 @app.callback(Output('enq-slider-6','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.enq[6]]
 
+
+@app.callback(Output('enq-6','children'),
+              [Input('enq-slider-6', 'value')])
+def fill_werk_inputs(val):
+    return "Voorstelling bezocht: {}%".format(val)
+
+
+# Sport beoefend
 @app.callback(Output('enq-slider-7','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -296,19 +505,29 @@ def fill_werk_inputs(postcode):
     return df[Columns.enq[7]]
 
 
+@app.callback(Output('enq-7','children'),
+              [Input('enq-slider-7', 'value')])
+def fill_werk_inputs(val):
+    return "Sport beoefend: {}%".format(val)
 
+
+# Plaatsen buurtparkings
 @app.callback(Output('plaatsen-input-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.plaatsen[0]]
 
+
+# Plaatsen fietsenstallingen
 @app.callback(Output('plaatsen-input-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.plaatsen[1]]
 
+
+# Plaatsen velostations
 @app.callback(Output('plaatsen-input-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
@@ -316,23 +535,44 @@ def fill_werk_inputs(postcode):
     return df[Columns.plaatsen[2]]
 
 
+# Oppervlakte sportterreinen
 @app.callback(Output('opp-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.opp[0]]
 
+
+@app.callback(Output('opp-0','children'),
+              [Input('opp-slider-0', 'value')])
+def fill_werk_inputs(val):
+    return "Oppervlakte sportterreinen: {}%".format(val)
+
+# Oppervlakte pleinen
 @app.callback(Output('opp-slider-1','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.opp[1]]
 
+
+@app.callback(Output('opp-1','children'),
+              [Input('opp-slider-1', 'value')])
+def fill_werk_inputs(val):
+    return "Oppervlakte pleinen: {}%".format(val)
+
+# Oppervlate speelterreinen
 @app.callback(Output('opp-slider-2','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
     return df[Columns.opp[2]]
+
+
+@app.callback(Output('opp-2','children'),
+              [Input('opp-slider-2', 'value')])
+def fill_werk_inputs(val):
+    return "Oppervlate speelterreinen: {}%".format(val)
 
 
 
