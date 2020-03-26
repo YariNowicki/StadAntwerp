@@ -1,14 +1,14 @@
 from dash.dependencies import Input, Output, State
 import pandas as pd
-import dash_core_components as dcc
-import dash_html_components as html
+import matplotlib.pyplot as plt
 import plotly.express as px
 from app import app
 from df_calls import DataCalls
 from columns import Columns
 from keras.models import load_model
 from snow_calls import SnowFlakeCalls
-
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 dc = DataCalls()
 snow = SnowFlakeCalls()
@@ -52,7 +52,7 @@ def create_map(df_pred):
                                color_continuous_scale=px.colors.sequential.Blues, range_color=(35, 55), zoom=9.5,
                                locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
     fig.update_geos(fitbounds="locations", visible=False)
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
     return fig
 
 
@@ -66,12 +66,17 @@ def update_choropleth_mapbox_prediction(*vals):
         model = load_model('model/DashModel.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
-            inputs.append(v)
+            if v is not None:
+                inputs.append(v)
+            else:
+                inputs.append(-1)
+        inwoners = dc.get_inwoners(vals[1])
+        inputs[-6] = inputs[-6] / inwoners.values[0]
+        inputs[-5] = inputs[-5] / inwoners.values[0]
+        inputs[-4] = inputs[-4] / inwoners.values[0]
         inputs = dc.transfrom(inputs)
         row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
-        row_df['postcode'] = vals[1]
         row_df = row_df[Columns.input_columns]
-
         preds = model.predict(row_df.values)  # Predicts for each postcode
 
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
@@ -80,6 +85,54 @@ def update_choropleth_mapbox_prediction(*vals):
         return fig
     else:
         return initialize_map()
+
+
+#  Predictions
+@app.callback(Output('beste-indicatoren-chart', 'figure'),
+              [Input('btn-predictie', 'n_clicks')],
+              [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
+def create_bar_chart(*vals):
+    if vals[0] is not None:
+        # Load prediction model
+        model = load_model('model/DashModel.h5')
+        inputs = []  # Placeholder to later place the list as a row in the DataFrame
+        for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
+            if v is not None:
+                inputs.append(v)
+            else:
+                inputs.append(-1)
+        inwoners = dc.get_inwoners(vals[1])
+        inputs[-6] = inputs[-6]/inwoners.values[0]
+        inputs[-5] = inputs[-5] / inwoners.values[0]
+        inputs[-4] = inputs[-4] / inwoners.values[0]
+        inputs = dc.transfrom(inputs)
+        row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
+        row_df = row_df[Columns.input_columns]
+        weight = model.get_weights()
+        df_weight = pd.DataFrame(weight[0])
+        df_weight = df_weight.transpose()
+        df_weight.columns = row_df.columns
+
+        analysis = row_df * df_weight
+
+        analysis = analysis.sort_values(axis=1, by=[0])
+        fig = go.Figure()
+        y_data_worst = analysis[analysis.columns[:5]].loc[0].values
+        x_data_worst = analysis.columns[:5]
+        for column in x_data_worst:
+            fig.add_trace(go.Bar(x=[column], y=[analysis[column].loc[0]],name=column))
+        y_data_best = analysis[analysis.columns[-5:]].loc[0].values
+        x_data_best = analysis.columns[-5:]
+        for column in x_data_best:
+            fig.add_trace(go.Bar(x=[column], y=[analysis[column].loc[0]],name=column))
+        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
+        return fig
+    else:
+        fig = make_subplots(rows=2, cols=1)
+        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
+        return fig
+
+
 
 
 # Aantal loontrekkenden

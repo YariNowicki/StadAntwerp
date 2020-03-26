@@ -9,33 +9,47 @@ import callbacks
 dc = DataCalls()
 snow = SnowFlakeCalls()
 fig = callbacks.initialize_map()
-
-border_style = {'padding': '2px','border': '1px solid'}
-input_div_style = {'float': 'left', 'width': '30%','height': '750px',
-         'overflow-y': 'scroll',
-         'margin': '10px'}
-button_style = {
-  'padding': '15px 32px',
-  'text-align': 'center',
-  'text-decoration': 'none',
-  'display': 'inline-block',
-  'font-size': '16px'
+big_div_style = {
+'position': 'absolute', 'top': '0', 'left': '0', 'height': '100vh', 'width': '100vh'
 }
+border_style = {'padding': '2px','border': '1px solid'}
+button_style = {
+    'padding': '15px 32px',
+    'text-align': 'center',
+    'text-decoration': 'none',
+    'display': 'inline-block',
+    'font-size': '16px',
+    'width':'100%'
+}
+main_div_style = {
+    'display': 'flex',
+    'maring':'2px'
+}
+container_right_style = {'width':'100%','margin':'5px'}
+container_left_style = {'width':'100%','margin':'5px'}
+container_center_style = {'width':'100%','margin':'5px'}
+H1_style = {
+        'text-align': 'center',
+        'font-size': '300%',
+        'position':'absolute',
+        'width': '100%',
+        'vertical-align': 'top',
+        'display': 'inline-block'}
+Hr_style = {'position':'absolute'}
 
 main = html.Div(children=[
     html.H1(id='title',
-        children='Demo Antwerpen',
-        style={
-            'text-align': 'center',
-            'font-size': '300%'}),
-    html.Div(children=[
+        children='Demo Antwerpen', style=H1_style),
+    html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
+    html.Hr(),
+    html.Br(), html.Br(),
+    html.Div(id="main-div",children=[
         html.Div(children=[
-            html.Button('Predict', id='btn-predictie', style=button_style),
-            dcc.Dropdown(id='choose-postcode',
-                         options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
-                         value=2000,style={'width': '50%'})
-        ]),
-        html.Div(children=[
+            html.Div(children=[
+                html.Button('Predict', id='btn-predictie', style=button_style),
+                dcc.Dropdown(id='choose-postcode',
+                             options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
+                             value=2000)]),
             html.Div(children=[
                 html.Div(id='inp-werk',children=[
                     html.P("loontrekkenden %", id="werk-0"),
@@ -138,11 +152,12 @@ main = html.Div(children=[
                     dcc.Slider(id='opp-slider-1', min=0, max=25, step=0.001),
                     html.P("Oppervlakte speelterreinen %", id="opp-2"),
                     dcc.Slider(id='opp-slider-2', min=0, max=1, step=0.0001)
-                ], style=border_style)], style=input_div_style
-            )]),
-    ]),
-    html.Div(
-        dcc.Graph(id='predicties', figure=fig),
-        style={'float': 'left'}
-    )
+                ], style=border_style)],style={'overflow-y':'scroll', 'height' : '500px','padding': '2px'})
+        ],style=container_left_style),
+        html.Div(
+            dcc.Graph(id='predicties', figure=fig),style=container_center_style
+        ),
+        html.Div(
+            dcc.Graph(id='beste-indicatoren-chart'),style=container_right_style)
+        ], style=main_div_style)
 ])

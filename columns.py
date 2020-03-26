@@ -57,7 +57,7 @@ class Columns:
                     'opp_sportterreinen',
                     'opp_gebruiksgroen_en_pleinen',
                     'opp_speelterreinen']
-    input_columns = ['postcode', 'aantal_loontrekkenden', 'aantal_werkzoekende',
+    input_columns = ['aantal_loontrekkenden', 'aantal_werkzoekende',
                        'aantal_zelfstandigen', 'inactieven', 'belastingplichtigen',
                        'gemiddeld_netto_belastbaar_inkomen_per_persoon',
                        'opbrengst_aanvullende_personenbelasting_per_belast',
@@ -120,7 +120,7 @@ class Columns:
                              "kotdichtheid-input-0",
                              "plaatsen-input-0",
                              "plaatsen-input-1",
+                             "plaatsen-input-2",
                              "opp-slider-0",
                              "opp-slider-1",
-                             "opp-slider-2",
-                             "plaatsen-input-2"]
+                             "opp-slider-2"]

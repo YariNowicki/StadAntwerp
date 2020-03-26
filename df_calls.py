@@ -24,3 +24,8 @@ class DataCalls:
     def transfrom(self, inp):
         return self.min_max_scaler.transform([inp])
 
+    def get_inwoners(self, postcode):
+        df_inp = self.df.copy()
+        df_inp = df_inp[(df_inp['jaar'] == 2020) & (df_inp['postcode'] == str(postcode))]
+        return df_inp['aantal_inwoners']
+
