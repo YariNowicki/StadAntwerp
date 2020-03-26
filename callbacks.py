@@ -8,6 +8,7 @@ from columns import Columns
 from keras.models import load_model
 from snow_calls import SnowFlakeCalls
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 dc = DataCalls()
 snow = SnowFlakeCalls()
@@ -51,7 +52,7 @@ def create_map(df_pred):
                                color_continuous_scale=px.colors.sequential.Blues, range_color=(35, 55), zoom=9.5,
                                locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
     fig.update_geos(fitbounds="locations", visible=False)
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
     return fig
 
 
@@ -106,19 +107,23 @@ def create_bar_chart(*vals):
         df_weight.columns = row_df.columns
 
         analysis = row_df * df_weight
-        print(analysis.loc[0].sum())
         analysis = analysis.sort_values(axis=1, by=[0])
-        print(analysis)
-        y_data = analysis.loc[0].values
-        x_data = analysis.columns
-        data = go.Bar(
-            x = x_data,
-            y = y_data
-        )
-        layout = go.Layout(title='indicatoren')
-        return go.Figure(data,layout)
+        fig = go.Figure()
+        y_data_worst = analysis[analysis.columns[:5]].loc[0].values
+        x_data_worst = analysis.columns[:5]
+        for column in x_data_worst:
+            fig.add_trace(go.Bar(x=[column], y=[analysis[column].loc[0]],name=column))
+        y_data_best = analysis[analysis.columns[-5:]].loc[0].values
+        x_data_best = analysis.columns[-5:]
+        for column in x_data_best:
+            fig.add_trace(go.Bar(x=[column], y=[analysis[column].loc[0]],name=column))
+        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
+        return fig
     else:
-        return initialize_map()
+        fig = make_subplots(rows=2, cols=1)
+        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
+        return fig
+
 
 
 
