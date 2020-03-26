@@ -1,14 +1,13 @@
 from dash.dependencies import Input, Output, State
 import pandas as pd
-import dash_core_components as dcc
-import dash_html_components as html
+import matplotlib.pyplot as plt
 import plotly.express as px
 from app import app
 from df_calls import DataCalls
 from columns import Columns
 from keras.models import load_model
 from snow_calls import SnowFlakeCalls
-
+import plotly.graph_objects as go
 
 dc = DataCalls()
 snow = SnowFlakeCalls()
@@ -66,7 +65,10 @@ def update_choropleth_mapbox_prediction(*vals):
         model = load_model('model/DashModel.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
-            inputs.append(v)
+            if v is not None:
+                inputs.append(v)
+            else:
+                inputs.append(0)
         inputs = dc.transfrom(inputs)
         row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
         row_df['postcode'] = vals[1]
@@ -80,6 +82,44 @@ def update_choropleth_mapbox_prediction(*vals):
         return fig
     else:
         return initialize_map()
+
+
+#  Predictions
+@app.callback(Output('beste-indicatoren-chart', 'figure'),
+              [Input('btn-predictie', 'n_clicks')],
+              [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
+def create_bar_chart(*vals):
+    if vals[0] is not None:
+        # Load prediction model
+        model = load_model('model/DashModel.h5')
+        inputs = []  # Placeholder to later place the list as a row in the DataFrame
+        for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
+            inputs.append(v)
+        inputs = dc.transfrom(inputs)
+        row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
+        row_df['postcode'] = vals[1]
+        row_df = row_df[Columns.input_columns]
+
+        weight = model.get_weights()
+        df_weight = pd.DataFrame(weight[0])
+        df_weight = df_weight.transpose()
+        df_weight.columns = row_df.columns
+
+        analysis = row_df * df_weight
+        print(analysis.loc[0].sum())
+        analysis = analysis.sort_values(axis=1, by=[0])
+        print(analysis)
+        y_data = analysis.loc[0].values
+        x_data = analysis.columns
+        data = go.Bar(
+            x = x_data,
+            y = y_data
+        )
+        layout = go.Layout(title='indicatoren')
+        return go.Figure(data,layout)
+    else:
+        return initialize_map()
+
 
 
 # Aantal loontrekkenden
