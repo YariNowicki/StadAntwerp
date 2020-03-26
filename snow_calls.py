@@ -2,14 +2,17 @@ import pandas as pd
 import os
 import snowflake.connector
 import json
-from sklearn import preprocessing #Used to pre process our data
+from columns import Columns
 
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
-    DISPLAY_COLUMNS = ['postcode', 'jaar', 'fiets_naar_werk_school', 'naam', 'shape_area', 'shape_length']
+    DROPDOWN_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DROPDOWN_LIST"
+    INPUT_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_AVG"
+
 
     def get_geo_data(self):
+        print("Getting snowflake data...(geo data)")
         ctx = snowflake.connector.connect(
             user='YNOWICKI',
             password=os.getenv('SNOWSQL_PWD'),
@@ -43,7 +46,7 @@ class SnowFlakeCalls:
         cs.execute(self.DF_QUERY)
         data = cs.fetchall()
 
-        df = pd.DataFrame(data, columns=self.DISPLAY_COLUMNS)
+        df = pd.DataFrame(data, columns=Columns.display)
         df = df.sort_values(by=['postcode'])
         df['fiets_naar_werk_school'] = df['fiets_naar_werk_school'].str.replace(',', '.')
         df['fiets_naar_werk_school'] = pd.to_numeric(df['fiets_naar_werk_school'])
@@ -56,4 +59,42 @@ class SnowFlakeCalls:
 
         for feat in d['features']:
             feat['id'] = link(feat['properties']['postcode'])
+        print("Done!")
         return df, d
+
+    def get_dropdown_list(self):
+        print("Getting snowflake data...(Dropdownlist)")
+        ctx = snowflake.connector.connect(
+            user='YNOWICKI',
+            password=os.getenv('SNOWSQL_PWD'),
+            account='datasense.eu-west-1',
+            warehouse='SMALL_WH',
+            role='MOBILITY_ANTWERP',
+            database='DEMO_ANTWERP_CITY')
+        cs = ctx.cursor()
+
+        cs.execute(self.DROPDOWN_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=['postcode','naam'])
+
+        out = []
+        for postcode,naam in zip(df['postcode'],df['naam']):
+            out.append([postcode , naam])
+        print("Done!")
+        return out
+
+    def get_input_data(self):
+        print("Getting snowflake data...(Input data)")
+        ctx = snowflake.connector.connect(
+            user='YNOWICKI',
+            password=os.getenv('SNOWSQL_PWD'),
+            account='datasense.eu-west-1',
+            warehouse='SMALL_WH',
+            role='MOBILITY_ANTWERP',
+            database='DEMO_ANTWERP_CITY')
+        cs = ctx.cursor()
+        cs.execute(self.INPUT_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=Columns.total_columns)
+        print("Done!")
+        return df
