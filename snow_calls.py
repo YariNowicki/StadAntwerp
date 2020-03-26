@@ -3,7 +3,6 @@ import os
 import snowflake.connector
 import json
 from columns import Columns
-from sklearn import preprocessing #Used to pre process our data
 
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"

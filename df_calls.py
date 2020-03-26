@@ -15,31 +15,11 @@ class DataCalls:
     def __init__(self):
         pass
 
-    def get_input_data(self):
-        df_inp = self.df.copy()
-        df_inp = df_inp[df_inp['jaar'] == 2016].dropna(axis=0, how='any')
-        return df_inp
-
-    def get_dropdown_data(self):
-        df_drop = self.df.copy()
-        df_drop = df_drop[df_drop['jaar'] == 2016].dropna(axis=0, how='any')
-        out = []
-        for p in df_drop['postcode']:
-            out.append([str(p),p])
-        return out
-
     def get_inp_data(self, postcode):
         df_inp = self.df.copy()
         df_inp = df_inp[(df_inp['jaar'] == 2016) & (df_inp['postcode'] == str(postcode))]
         df_inp = df_inp[Columns.min_max_columns]
-        print(df_inp.values)
-        df_inp.to_csv("test.csv")
         return df_inp.iloc[-1]
-
-    def get_postcodes(self):
-        out = self.df.copy()
-        out = out['postcode'].sort_values().unique()
-        return out
 
     def transfrom(self, inp):
         return self.min_max_scaler.transform([inp])

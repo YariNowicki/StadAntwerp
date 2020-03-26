@@ -48,7 +48,7 @@ def initialize_map():
 
 def create_map(df_pred):
     # Generates map with the prediction values
-    fig = px.choropleth_mapbox(data_frame=df_pred, geojson=d, color='fiets_naar_werk_school',
+    fig = px.choropleth_mapbox(data_frame=df_pred, geojson=d, color='fiets_naar_werk_school', hover_data=["naam","postcode"],
                                color_continuous_scale=px.colors.sequential.Blues, range_color=(35, 55), zoom=9.5,
                                locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
     fig.update_geos(fitbounds="locations", visible=False)
@@ -79,7 +79,6 @@ def update_choropleth_mapbox_prediction(*vals):
         fig = create_map(df_pred)
         return fig
     else:
-        print("gets here")
         return initialize_map()
 
 
@@ -94,7 +93,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('werk-0','children'),
               [Input('werk-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Loontrekkenden: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Loontrekkenden: {}%".format(round(val,2))
 
 
 # Aantal werkzoekenden
@@ -108,7 +109,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('werk-1','children'),
               [Input('werk-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Werkzoekenden: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Werkzoekenden: {}%".format(round(val,2))
 
 
 # Aantal zelfstandigen
@@ -122,7 +125,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('werk-2','children'),
               [Input('werk-slider-2', 'value')])
 def fill_werk_inputs(val):
-    return "Zelfstandigen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Zelfstandigen: {}%".format(round(val,2))
 
 
 # Inactieven
@@ -136,7 +141,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('werk-3','children'),
               [Input('werk-slider-3', 'value')])
 def fill_werk_inputs(val):
-    return "Inactieven: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Inactieven: {}%".format(round(val,2))
 
 
 # Belastingplichtigen
@@ -150,7 +157,9 @@ def fill_belast_inputs(postcode):
 @app.callback(Output('belastplicht-0','children'),
               [Input('belast-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Belastingplichtigen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Belastingplichtigen: {}%".format(round(val,2))
 
 
 # Gemiddeld netto belastbaar inkomen
@@ -187,7 +196,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-0','children'),
               [Input('secundair-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen ASO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen ASO: {}%".format(round(val,2))
 
 
 # BSO
@@ -201,7 +212,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-1','children'),
               [Input('secundair-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen BSO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen BSO: {}%".format(round(val,2))
 
 
 # KSO
@@ -215,7 +228,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-2','children'),
               [Input('secundair-slider-2', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen KSO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen KSO: {}%".format(round(val,2))
 
 
 # TSO
@@ -229,7 +244,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-3','children'),
               [Input('secundair-slider-3', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen TSO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen TSO: {}%".format(round(val,2))
 
 
 # Deeltijds BSO
@@ -243,7 +260,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-4','children'),
               [Input('secundair-slider-4', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen deeltijds BSO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen deeltijds BSO: {}%".format(round(val,2))
 
 
 # BUSO
@@ -257,7 +276,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-5','children'),
               [Input('secundair-slider-5', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen BUSO: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen BUSO: {}%".format(round(val,2))
 
 
 # Geen vertraging
@@ -271,7 +292,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('vertraging-0','children'),
               [Input('vertraging-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen zonder vertraging: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen zonder vertraging: {}%".format(round(val,2))
 
 
 # Leerlingen met 1 jaar vertraging
@@ -285,7 +308,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('vertraging-1','children'),
               [Input('vertraging-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen met 1 jaar vertraging: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen met 1 jaar vertraging: {}%".format(round(val,2))
 
 
 # Leerlingen meerdere jaren vertraging
@@ -299,7 +324,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('vertraging-2','children'),
               [Input('vertraging-slider-2', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen meerdere jaren vertraging: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen meerdere jaren vertraging: {}%".format(round(val,2))
 
 
 # Leerlingen A-stroom
@@ -313,7 +340,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('stroom-0','children'),
               [Input('stroom-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen A-stroom: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen A-stroom: {}%".format(round(val,2))
 
 
 # Leerlingen B-stroom
@@ -327,7 +356,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('stroom-1','children'),
               [Input('stroom-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen B-stroom: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen B-stroom: {}%".format(round(val,2))
 
 
 # Leerlingen die naar een basisschool gaan binnen Antwerpen
@@ -341,7 +372,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('basis-0','children'),
               [Input('basis-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(round(val,2))
 
 
 # Leerlingen die naar een basisschool gaan buiten Antwerpen
@@ -355,7 +388,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('basis-1','children'),
               [Input('basis-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen die naar een basisschool gaan buiten Antwerpen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen die naar een basisschool gaan buiten Antwerpen: {}%".format(round(val,2))
 
 
 # Leerlingen die naar een secundaire school gaan binnen Antwerpen %
@@ -369,7 +404,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-a-0','children'),
               [Input('so-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen die naar een secundaire school gaan binnen Antwerpen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen die naar een secundaire school gaan binnen Antwerpen: {}%".format(round(val,2))
 
 
 # Leerlingen die naar een secundaire school gaan buiten Antwerpen %
@@ -383,7 +420,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('so-a-1','children'),
               [Input('so-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Leerlingen die naar een secundaire school gaan buiten Antwerpen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Leerlingen die naar een secundaire school gaan buiten Antwerpen: {}%".format(round(val,2))
 
 
 #  Kotdichtheid
@@ -397,6 +436,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('kot-0','children'),
               [Input('kotdichtheid-input-0', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Kotdichtheid: {}%".format(val)
 
 
@@ -411,6 +452,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-0','children'),
               [Input('enq-slider-0', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Bibliotheek bezocht: {}%".format(val)
 
 
@@ -425,6 +468,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-1','children'),
               [Input('enq-slider-1', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Boek gelezen: {}%".format(val)
 
 
@@ -439,6 +484,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-2','children'),
               [Input('enq-slider-2', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Museum bezocht: {}%".format(val)
 
 # Park bezocht
@@ -452,6 +499,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-3','children'),
               [Input('enq-slider-3', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Park bezocht: {}%".format(val)
 
 
@@ -466,6 +515,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-4','children'),
               [Input('enq-slider-4', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Restaurant of café bezocht: {}%".format(val)
 
 
@@ -480,6 +531,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-5','children'),
               [Input('enq-slider-5', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Televisie gekeken: {}%".format(val)
 
 
@@ -494,6 +547,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-6','children'),
               [Input('enq-slider-6', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Voorstelling bezocht: {}%".format(val)
 
 
@@ -508,6 +563,8 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('enq-7','children'),
               [Input('enq-slider-7', 'value')])
 def fill_werk_inputs(val):
+    if val is None:
+        val = 0
     return "Sport beoefend: {}%".format(val)
 
 
@@ -546,7 +603,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('opp-0','children'),
               [Input('opp-slider-0', 'value')])
 def fill_werk_inputs(val):
-    return "Oppervlakte sportterreinen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Oppervlakte sportterreinen (tot 1% van het totaal oppervlakte): {}%".format(round(val,2))
 
 # Oppervlakte pleinen
 @app.callback(Output('opp-slider-1','value'),
@@ -559,7 +618,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('opp-1','children'),
               [Input('opp-slider-1', 'value')])
 def fill_werk_inputs(val):
-    return "Oppervlakte pleinen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Oppervlakte pleinen (tot 25% van het totaal oppervlakte): {}%".format(round(val,2))
 
 # Oppervlate speelterreinen
 @app.callback(Output('opp-slider-2','value'),
@@ -572,7 +633,9 @@ def fill_werk_inputs(postcode):
 @app.callback(Output('opp-2','children'),
               [Input('opp-slider-2', 'value')])
 def fill_werk_inputs(val):
-    return "Oppervlate speelterreinen: {}%".format(val)
+    if val is None:
+        val = 0
+    return "Oppervlate speelterreinen (tot 1% van het totaal oppervlakte): {}%".format(round(val,2))
 
 
 
