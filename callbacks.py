@@ -69,12 +69,14 @@ def update_choropleth_mapbox_prediction(*vals):
             if v is not None:
                 inputs.append(v)
             else:
-                inputs.append(0)
+                inputs.append(-1)
+        inwoners = dc.get_inwoners(vals[1])
+        inputs[-6] = inputs[-6] / inwoners.values[0]
+        inputs[-5] = inputs[-5] / inwoners.values[0]
+        inputs[-4] = inputs[-4] / inwoners.values[0]
         inputs = dc.transfrom(inputs)
         row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
-        row_df['postcode'] = vals[1]
         row_df = row_df[Columns.input_columns]
-
         preds = model.predict(row_df.values)  # Predicts for each postcode
 
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
@@ -95,18 +97,24 @@ def create_bar_chart(*vals):
         model = load_model('model/DashModel.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
-            inputs.append(v)
+            if v is not None:
+                inputs.append(v)
+            else:
+                inputs.append(-1)
+        inwoners = dc.get_inwoners(vals[1])
+        inputs[-6] = inputs[-6]/inwoners.values[0]
+        inputs[-5] = inputs[-5] / inwoners.values[0]
+        inputs[-4] = inputs[-4] / inwoners.values[0]
         inputs = dc.transfrom(inputs)
         row_df = pd.DataFrame(inputs, columns=Columns.min_max_columns)
-        row_df['postcode'] = vals[1]
         row_df = row_df[Columns.input_columns]
-
         weight = model.get_weights()
         df_weight = pd.DataFrame(weight[0])
         df_weight = df_weight.transpose()
         df_weight.columns = row_df.columns
 
         analysis = row_df * df_weight
+
         analysis = analysis.sort_values(axis=1, by=[0])
         fig = go.Figure()
         y_data_worst = analysis[analysis.columns[:5]].loc[0].values
