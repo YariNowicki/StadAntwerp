@@ -4,6 +4,19 @@ import snowflake.connector
 import json
 from columns import Columns
 
+
+def login():
+    ctx = snowflake.connector.connect(
+        user='YNOWICKI',
+        password=os.getenv('SNOWSQL_PWD'),
+        account='datasense.eu-west-1',
+        warehouse='SMALL_WH',
+        role='MOBILITY_ANTWERP',
+        database='DEMO_ANTWERP_CITY')
+    cs = ctx.cursor()
+    return cs
+
+
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
@@ -13,14 +26,7 @@ class SnowFlakeCalls:
 
     def get_geo_data(self):
         print("Getting snowflake data...(geo data)")
-        ctx = snowflake.connector.connect(
-            user='YNOWICKI',
-            password=os.getenv('SNOWSQL_PWD'),
-            account='datasense.eu-west-1',
-            warehouse='SMALL_WH',
-            role='MOBILITY_ANTWERP',
-            database='DEMO_ANTWERP_CITY')
-        cs = ctx.cursor()
+        cs = login()
 
         def link(postcode):
             links = {
@@ -64,15 +70,7 @@ class SnowFlakeCalls:
 
     def get_dropdown_list(self):
         print("Getting snowflake data...(Dropdownlist)")
-        ctx = snowflake.connector.connect(
-            user='YNOWICKI',
-            password=os.getenv('SNOWSQL_PWD'),
-            account='datasense.eu-west-1',
-            warehouse='SMALL_WH',
-            role='MOBILITY_ANTWERP',
-            database='DEMO_ANTWERP_CITY')
-        cs = ctx.cursor()
-
+        cs = login()
         cs.execute(self.DROPDOWN_QUERY)
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=['postcode','naam'])
@@ -85,14 +83,7 @@ class SnowFlakeCalls:
 
     def get_input_data(self):
         print("Getting snowflake data...(Input data)")
-        ctx = snowflake.connector.connect(
-            user='YNOWICKI',
-            password=os.getenv('SNOWSQL_PWD'),
-            account='datasense.eu-west-1',
-            warehouse='SMALL_WH',
-            role='MOBILITY_ANTWERP',
-            database='DEMO_ANTWERP_CITY')
-        cs = ctx.cursor()
+        cs = login()
         cs.execute(self.INPUT_QUERY)
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=Columns.total_columns)
@@ -100,14 +91,7 @@ class SnowFlakeCalls:
         return df
 
     def get_inwoners(self):
-        ctx = snowflake.connector.connect(
-            user='YNOWICKI',
-            password=os.getenv('SNOWSQL_PWD'),
-            account='datasense.eu-west-1',
-            warehouse='SMALL_WH',
-            role='MOBILITY_ANTWERP',
-            database='DEMO_ANTWERP_CITY')
-        cs = ctx.cursor()
+        cs = login()
         cs.execute(self.INWONERS_QUERY)
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=['postcode','aantal_inwoners'])
