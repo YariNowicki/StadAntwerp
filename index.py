@@ -5,7 +5,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from app import app
-from layouts import main_layout, model_layout
+from layouts import main_layout, model_layout, descriptive_layout
 import callbacks
 
 app.layout = html.Div([
@@ -21,6 +21,8 @@ def display_page(pathname):
          return main_layout
     elif pathname == '/model':
         return model_layout
+    elif pathname == '/descriptive':
+        return descriptive_layout
     else:
         return '404'
 

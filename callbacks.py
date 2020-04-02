@@ -10,6 +10,7 @@ from snow_calls import SnowFlakeCalls
 import plotly.express as px
 import warnings
 import statistics
+import plotly.graph_objects as go
 warnings.simplefilter(action='ignore', category=FutureWarning)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
@@ -89,6 +90,62 @@ def create_map(df_pred):
     fig.update_geos(fitbounds="locations", visible=False)
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
     return fig
+
+
+@app.callback(Output('fiets-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_fietsgebruik(value):
+    df = snow.get_fietsgebruik(value)
+    df = df.sort_values(by=['jaar'])
+    fig = px.line(df, x="jaar", y="fietsers", color='naam')
+    fig.update_layout(title='% regelmatige fietsgebruikers naar het werk/school')
+    return fig
+
+@app.callback(Output('inwoners-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_inwoners(value):
+    df = snow.get_inwoners_display(value)
+    fig = go.Figure(data=[go.Pie(labels=df["naam"], values=df["inwoners"], hole=.3)])
+    fig.update_layout(title='Aantal inwoners')
+    return fig
+
+
+@app.callback(Output('leerlingen-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_leerlingen(value):
+    df = snow.get_school_leerlingen_display(value)
+    fig = go.Figure(data=[
+        go.Bar(name='Basisonderwijs', x=df["naam"], y=df["basis_a"]),
+        go.Bar(name='Secundair onderwijs', x=df["naam"], y=df["so_a"])
+    ])
+    fig.update_layout(title="% Leerlingen die naar school gaan binnen Antwerpen (2018)")
+    return fig
+
+
+@app.callback(Output('status-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_leerlingen(value):
+    df = snow.get_werk_data(value)
+    data = []
+    for index, row in df.iterrows():
+        r = [row['naam'], row['jaar'], 'loontrekkenden', int(row['loontrekkenden'])]
+        r2 = [row['naam'], row['jaar'], 'werkzoekenden', int(row['werkzoekenden'])]
+        r3 = [row['naam'], row['jaar'], 'zelfstandigen', int(row['zelfstandigen'])]
+        r4 = [row['naam'], row['jaar'], 'inactieven', int(row['inactieven'])]
+        data.append(r)
+        data.append(r2)
+        data.append(r3)
+        data.append(r4)
+    display = pd.DataFrame(data, columns=['naam', 'jaar', 'label', 'value'])
+    df = display.copy()
+    '''
+    fig = px.sunburst(display, path=['naam', 'label'], values='value')
+    fig.update_layout(title="Status inwoners")
+    '''
+    fig = px.sunburst(df, path=['naam','label'], values='value')
+    fig.update_layout(title="Status inwoners (2016)")
+    return fig
+
 
 
 #  Predictions

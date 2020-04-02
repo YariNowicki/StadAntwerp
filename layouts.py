@@ -64,6 +64,10 @@ main_layout = html.Div(
                         html.A(
                             html.Button("Model", id="model-button"),
                             href="/model",
+                        ),
+                        html.A(
+                            html.Button("Descriptive", id="desc-button"),
+                            href="/descriptive",
                         )
                     ],
                     className="one-third column",
@@ -234,6 +238,10 @@ model_layout = html.Div(
                         html.A(
                             html.Button("Predicties", id="predictie-button"),
                             href="/",
+                        ),
+                        html.A(
+                            html.Button("Descriptive", id="desc-button"),
+                            href="/descriptive",
                         )
                     ],
                     className="one-third column",
@@ -298,6 +306,129 @@ model_layout = html.Div(
                 ),
             ],
             className="row flex-display",
+        ),
+    ],
+    id="mainContainer",
+    style={"display": "flex", "flex-direction": "column"},
+)
+
+descriptive_layout = html.Div(
+    [
+        dcc.Store(id="aggregate_data"),
+        # empty Div to trigger javascript file for graph resizing
+        html.Div(id="output-clientside"),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Img(
+                            src="./assets/datasense.png",
+                            id="plotly-image",
+                            style={
+                                "height": "60px",
+                                "width": "auto",
+                                "margin-bottom": "25px",
+                            },
+                        )
+                    ],
+                    className="one-third column",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H3(
+                                    "Stad Antwerpen",
+                                    style={"margin-bottom": "0px"},
+                                ),
+                                html.H5(
+                                    "Fiets gebruik", style={"margin-top": "0px"}
+                                ),
+                            ]
+                        )
+                    ],
+                    className="one-half column",
+                    id="title",
+                ),
+                html.Div(
+                    [
+                        html.A(
+                            html.Button("Predicites", id="pred-button"),
+                            href="/",
+                        ),
+                        html.A(
+                            html.Button("Model", id="model-button"),
+                            href="/model",
+                        )
+                    ],
+                    className="one-third column",
+                    id="button",
+                ),
+            ],
+            id="header",
+            className="row flex-display",
+            style={"margin-bottom": "25px"},
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.P(
+                            "Selecteer één of meerdere gemeenten:",
+                            className="control_label",
+                        ),
+                        dcc.Dropdown(
+                            id="postcode-dropdown",
+                            options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
+                            multi=True,
+                            className="dcc_control",
+                            searchable=False
+                        ),
+                    ],
+                    className="pretty_container four columns",
+                    id="cross-filter-options",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+
+                            ],
+                            id="info-container",
+                            className="row container-display",
+                        )
+                    ],
+                    id="right-column",
+                    className="eight columns",
+                ),
+            ],
+            className="row flex-display",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="fiets-graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="leerlingen-graph")],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="inwoners-graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="status-graph")],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display"
         ),
     ],
     id="mainContainer",
