@@ -1,163 +1,330 @@
+from df_calls import DataCalls
+import plotly.express as px
 import dash_core_components as dcc
 import dash_html_components as html
-import plotly.express as px
-import plotly.graph_objects as go
-from df_calls import DataCalls
 from snow_calls import SnowFlakeCalls
-import callbacks
-
+import pandas as pd
+import statistics
 dc = DataCalls()
 snow = SnowFlakeCalls()
-fig = callbacks.initialize_map()
-big_div_style = {
-'position': 'absolute', 'top': '0', 'left': '0', 'height': '100vh', 'width': '100vh'
-}
-border_style = {'padding': '2px','border': '1px solid'}
-button_style = {
-    'padding': '15px 32px',
-    'text-align': 'center',
-    'text-decoration': 'none',
-    'display': 'inline-block',
-    'font-size': '16px',
-    'width':'100%'
-}
-main_div_style = {
-    'display': 'flex',
-    'maring':'2px'
-}
-container_right_style = {'width':'100%','margin':'5px'}
-container_left_style = {'width':'100%','margin':'5px'}
-container_center_style = {'width':'100%','margin':'5px'}
-H1_style = {
-        'text-align': 'center',
-        'font-size': '300%',
-        'position':'absolute',
-        'width': '100%',
-        'vertical-align': 'top',
-        'display': 'inline-block'}
-Hr_style = {'position':'absolute'}
 
-main = html.Div(children=[
-    html.H1(id='title',
-        children='Demo Antwerpen', style=H1_style),
-    html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
-    html.Hr(),
-    html.Br(), html.Br(),
-    html.Div(id="main-div",children=[
-        html.Div(children=[
-            html.Div(children=[
-                html.Button('Predict', id='btn-predictie', style=button_style),
-                dcc.Dropdown(id='choose-postcode',
-                             options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
-                             value=2000)]),
-            html.Div(children=[
-                html.Div(id='inp-werk',children=[
-                    html.P("loontrekkenden %", id="werk-0"),
-                    dcc.Slider(id='werk-slider-0',min=0,max=100,step=0.01),
-                    html.P("Werkzoekenden %", id="werk-1"),
-                    dcc.Slider(id='werk-slider-1',min=0,max=100,step=0.01),
-                    html.P("Zelfstandigen %", id="werk-2"),
-                    dcc.Slider(id='werk-slider-2',min=0,max=100,step=0.01),
-                    html.P("Inactieven %", id="werk-3"),
-                    dcc.Slider(id='werk-slider-3',min=0,max=100,step=0.01)
-                ], style=border_style),
-                html.Div(id='inp-belastingen-plichtigen', children=[
-                    html.P("Belastingplichtigen %", id="belastplicht-0"),
-                    dcc.Slider(id='belast-slider-0',min=0,max=100,step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-belasting',children=[
-                    html.P("Gemiddeld netto belastbaar inkomen", id="belast-0"),
-                    dcc.Input(id='belast-input-0',type='number'),
-                    html.P("Opbrengst personenbelasting per persoon", id="belast-1"),
-                    dcc.Input(id='belast-input-1',type='number')
-                ], style=border_style),
-                html.Div(id='inp-dichtheid', children=[
-                    html.P("Dichtheid (km²)",id="dichtheid-0"),
-                    dcc.Input(id='dichtheid-input-0',type='number')
-                ], style=border_style),
-                html.Div(id='inp-secundair', children=[
-                    html.P("Leerlingen ASO %", id="so-0"),
-                    dcc.Slider(id='secundair-slider-0', min=0, max=100, step=0.01),
-                    html.P("Leerlingen BSO %", id="so-1"),
-                    dcc.Slider(id='secundair-slider-1', min=0, max=100, step=0.01),
-                    html.P("Leerlingen KSO %", id="so-2"),
-                    dcc.Slider(id='secundair-slider-2', min=0, max=100, step=0.01),
-                    html.P("Leerlingen TSO %", id="so-3"),
-                    dcc.Slider(id='secundair-slider-3', min=0, max=100, step=0.01),
-                    html.P("Leerlingen deeltijds BSO %", id="so-4"),
-                    dcc.Slider(id='secundair-slider-4', min=0, max=100, step=0.01),
-                    html.P("Leerlingen BUSO %", id="so-5"),
-                    dcc.Slider(id='secundair-slider-5', min=0, max=100, step=0.01)
-                ], style=border_style),
-                html.Div(id='inp-vertraging', children=[
-                    html.P("Leerlingen zonder vertraging %", id="vertraging-0"),
-                    dcc.Slider(id='vertraging-slider-0', min=0, max=100, step=0.01),
-                    html.P("Leerlingen met 1 jaar vertraging %", id="vertraging-1"),
-                    dcc.Slider(id='vertraging-slider-1', min=0, max=100, step=0.01),
-                    html.P("Leerlingen met meerdere jaren vertraging %", id="vertraging-2"),
-                    dcc.Slider(id='vertraging-slider-2', min=0, max=100, step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-stroom', children=[
-                    html.P("Leerlingen A-stroom %", id="stroom-0"),
-                    dcc.Slider(id='stroom-slider-0', min=0, max=100, step=0.01),
-                    html.P("Leerlingen B-stroom %", id="stroom-1"),
-                    dcc.Slider(id='stroom-slider-1', min=0, max=100, step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-basis-a', children=[
-                    html.P("Leerlingen die naar een basisschool gaan binnen Antwerpen %", id="basis-0"),
-                    dcc.Slider(id='basis-slider-0', min=0, max=100, step=0.01),
-                    html.P("Leerlingen die naar een basisschool gaan buiten Antwerpen %", id="basis-1"),
-                    dcc.Slider(id='basis-slider-1', min=0, max=100, step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-so-a', children=[
-                    html.P("Leerlingen die naar een secundaire school gaan binnen Antwerpen %", id="so-a-0"),
-                    dcc.Slider(id='so-slider-0', min=0, max=100, step=0.01),
-                    html.P("Leerlingen die naar een secundaire school gaan buiten Antwerpen %", id="so-a-1"),
-                    dcc.Slider(id='so-slider-1', min=0, max=100, step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-kot', children=[
-                    html.P("Kotdichtheid %", id="kot-0"),
-                    dcc.Slider(id='kotdichtheid-input-0', min=0, max=100, step=0.01),
-                ], style=border_style),
-                html.Div(id='inp-enq', children=[
-                    html.P("Bibliotheek bezocht %", id="enq-0"),
-                    dcc.Slider(id='enq-slider-0', min=0, max=100, step=0.01),
-                    html.P("Boek gelezen %", id="enq-1"),
-                    dcc.Slider(id='enq-slider-1', min=0, max=100, step=0.01),
-                    html.P("Museum bezocht %", id="enq-2"),
-                    dcc.Slider(id='enq-slider-2', min=0, max=100, step=0.01),
-                    html.P("Park bezocht %", id="enq-3"),
-                    dcc.Slider(id='enq-slider-3', min=0, max=100, step=0.01),
-                    html.P("Restaurant of café bezocht %", id="enq-4"),
-                    dcc.Slider(id='enq-slider-4', min=0, max=100, step=0.01),
-                    html.P("Televisie gekeken %", id="enq-5"),
-                    dcc.Slider(id='enq-slider-5', min=0, max=100, step=0.01),
-                    html.P("Voorstelling bezocht %", id="enq-6"),
-                    dcc.Slider(id='enq-slider-6', min=0, max=100, step=0.01),
-                    html.P("Sport beoefend %", id="enq-7"),
-                    dcc.Slider(id='enq-slider-7', min=0, max=100, step=0.01)
-                ], style=border_style),
-                html.Div(id='inp-plaatsen', children=[
-                    html.P("Plaatsen buurtparkings", id="plaatsen-0"),
-                    dcc.Input(id='plaatsen-input-0',type='number'),
-                    html.P("Plaatsen fietsenstallingen", id="plaatsen-1"),
-                    dcc.Input(id='plaatsen-input-1',type='number'),
-                    html.P("Plaatsen velostations", id="plaatsen-2"),
-                    dcc.Input(id='plaatsen-input-2',type='number'),
-                ], style=border_style),
-                html.Div(id='inp-opp', children=[
-                    html.P("Oppervlakte sportterreinen %", id="opp-0"),
-                    dcc.Slider(id='opp-slider-0', min=0, max=1, step=0.0001),
-                    html.P("Oppervlakte pleinen %", id="opp-1"),
-                    dcc.Slider(id='opp-slider-1', min=0, max=25, step=0.001),
-                    html.P("Oppervlakte speelterreinen %", id="opp-2"),
-                    dcc.Slider(id='opp-slider-2', min=0, max=1, step=0.0001)
-                ], style=border_style)],style={'overflow-y':'scroll', 'height' : '500px','padding': '2px'})
-        ],style=container_left_style),
+chart = dc.weight_chart()
+df, d = snow.get_geo_data()
+df_pred = df.copy()
+df_pred = df_pred.reset_index()
+df_pred = df_pred.drop(['index'], axis=1)
+
+mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
+px.set_mapbox_access_token(mapbox_token)
+
+def create_map(df_pred):
+    # Generates map with the prediction values
+    fig = px.choropleth_mapbox(data_frame=df_pred, geojson=d, color='fiets_naar_werk_school', hover_data=["naam","postcode"],
+                               color_continuous_scale=px.colors.sequential.Blues, range_color=(20, 60), zoom=9.5,
+                               locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
+    fig.update_geos(fitbounds="locations", visible=False)
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
+    return fig
+
+fig = create_map(df_pred)
+
+layout = dict(
+    autosize=True,
+    automargin=True,
+    margin=dict(l=30, r=30, b=20, t=40),
+    hovermode="closest",
+    plot_bgcolor="#F9F9F9",
+    paper_bgcolor="#F9F9F9",
+    legend=dict(font=dict(size=10), orientation="h"),
+    title="Satellite Overview",
+    mapbox=dict(
+        accesstoken=mapbox_token,
+        style="light",
+        center=dict(lon=-78.05, lat=42.54),
+        zoom=7,
+    ),
+)
+
+# Create app layout
+main_layout = html.Div(
+    [
+        dcc.Store(id="aggregate_data"),
+        # empty Div to trigger javascript file for graph resizing
+        html.Div(id="output-clientside"),
         html.Div(
-            dcc.Graph(id='predicties', figure=fig),style=container_center_style
+            [
+                html.Div(
+                    [
+                        html.Img(
+                            src="./assets/datasense.png",
+                            id="plotly-image",
+                            style={
+                                "height": "60px",
+                                "width": "auto",
+                                "margin-bottom": "25px",
+                            },
+                        )
+                    ],
+                    className="one-third column",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H3(
+                                    "Stad Antwerpen",
+                                    style={"margin-bottom": "0px"},
+                                ),
+                                html.H5(
+                                    "Fietsgebruik", style={"margin-top": "0px"}
+                                ),
+                            ]
+                        )
+                    ],
+                    className="one-half column",
+                    id="title",
+                ),
+                html.Div(
+                    [
+                        html.A(
+                            html.Button("Model", id="model-button"),
+                            href="/model",
+                        )
+                    ],
+                    className="one-third column",
+                    id="button",
+                ),
+            ],
+            id="header",
+            className="row flex-display",
+            style={"margin-bottom": "25px"},
         ),
         html.Div(
-            dcc.Graph(id='beste-indicatoren-chart'),style=container_right_style)
-        ], style=main_div_style)
-])
+            [
+                
+            ],
+            className="row flex-display", style={'float':'right'}
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Button('Predict', id='btn-predictie'),
+                        html.Br(),
+                        dcc.Dropdown(id='choose-postcode',
+                             options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
+                             value=2000),
+                        html.Br(),
+                        html.Br(),
+                        html.Button('Inwoners', id='btn-inwoners', style={'width': '100%'}),
+                        html.Br(),
+                        html.Div(id='inp-inwoners' ,children=[
+                            html.P("Werkenden %", id="werk-0"),
+                            dcc.Slider(id='werk-slider-0',min=0,max=100,step=0.01),
+                            html.P("Belastingplichtigen %", id="belastplicht-0"),
+                            dcc.Slider(id='belast-slider-0',min=0,max=100,step=0.01),
+                            html.P("Gemiddeld netto belastbaar inkomen", id="belast-0"),
+                            dcc.Input(id='belast-input-0',type='number'),
+                            html.P("Opbrengst personenbelasting per persoon", id="belast-1"),
+                            dcc.Input(id='belast-input-1',type='number'),
+                            html.P("Dichtheid (km²)",id="dichtheid-0"),
+                            dcc.Input(id='dichtheid-input-0',type='number')
+                        ], style={'display': 'none'}),
+                        html.Br(),
+                        html.Br(),
+                        html.Button('Onderwijs', id='btn-onderwijs', style={'width': '100%'}),
+                        html.Br(),
+                        html.Div(id='inp-onderwijs', children=[
+                            html.P("Theoretisch geschoolde leerlingen %", id="so-0"),
+                            dcc.Slider(id='secundair-slider-0', min=0, max=100, step=0.01),
+                            html.P("Leerlingen zonder vertraging %", id="vertraging-0"),
+                            dcc.Slider(id='vertraging-slider-0', min=0, max=100, step=0.01),
+                            html.P("Leerlingen A-stroom %", id="stroom-0"),
+                            dcc.Slider(id='stroom-slider-0', min=0, max=100, step=0.01),
+                            html.P("Leerlingen die naar een basisschool gaan binnen Antwerpen %", id="basis-0"),
+                            dcc.Slider(id='basis-slider-0', min=0, max=100, step=0.01),
+                            html.P("Leerlingen die naar een secundaire school gaan binnen Antwerpen %", id="so-a-0"),
+                            dcc.Slider(id='so-slider-0', min=0, max=100, step=0.01),
+                            html.P("Kotdichtheid %", id="kot-0"),
+                            dcc.Slider(id='kotdichtheid-input-0', min=0, max=100, step=0.01)
+                        ], style={'display': 'none'}),
+                        html.Br(),
+                        html.Br(),
+                        html.Button('Enquête resultaten', id='btn-enq', style={'width': '100%'}),
+                        html.Br(),
+                        html.Div(id='inp-enq', children=[
+                            html.P("Bibliotheek bezocht %", id="enq-0"),
+                            dcc.Slider(id='enq-slider-0', min=0, max=100, step=0.01),
+                            html.P("Boek gelezen %", id="enq-1"),
+                            dcc.Slider(id='enq-slider-1', min=0, max=100, step=0.01),
+                            html.P("Museum bezocht %", id="enq-2"),
+                            dcc.Slider(id='enq-slider-2', min=0, max=100, step=0.01),
+                            html.P("Park bezocht %", id="enq-3"),
+                            dcc.Slider(id='enq-slider-3', min=0, max=100, step=0.01),
+                            html.P("Restaurant of café bezocht %", id="enq-4"),
+                            dcc.Slider(id='enq-slider-4', min=0, max=100, step=0.01),
+                            html.P("Televisie gekeken %", id="enq-5"),
+                            dcc.Slider(id='enq-slider-5', min=0, max=100, step=0.01),
+                            html.P("Voorstelling bezocht %", id="enq-6"),
+                            dcc.Slider(id='enq-slider-6', min=0, max=100, step=0.01),
+                            html.P("Sport beoefend %", id="enq-7"),
+                            dcc.Slider(id='enq-slider-7', min=0, max=100, step=0.01)
+                        ], style={'display': 'none'}),
+                        html.Br(),
+                        html.Br(),
+                        html.Button('parkings en velostations', id='btn-plaatsen', style={'width': '100%'}),
+                        html.Br(),
+                        html.Div(id='inp-plaatsen', children=[
+                            html.P("Plaatsen buurtparkings", id="plaatsen-0"),
+                            dcc.Input(id='plaatsen-input-0',type='number'),
+                            html.P("Plaatsen fietsenstallingen", id="plaatsen-1"),
+                            dcc.Input(id='plaatsen-input-1',type='number'),
+                            html.P("Plaatsen velostations", id="plaatsen-2"),
+                            dcc.Input(id='plaatsen-input-2',type='number'),
+                        ], style={'display': 'none'}),
+                        html.Br(),
+                        html.Br(),  
+                        html.Button('Oppenbare plaatsen', id='btn-opp', style={'width': '100%'}),
+                        html.Br(),
+                        html.Div(id='inp-opp', children=[
+                            html.P("Oppervlakte sportterreinen %", id="opp-0"),
+                            dcc.Slider(id='opp-slider-0', min=0, max=1, step=0.0001),
+                            html.P("Oppervlakte pleinen %", id="opp-1"),
+                            dcc.Slider(id='opp-slider-1', min=0, max=25, step=0.001),
+                            html.P("Oppervlakte speelterreinen %", id="opp-2"),
+                            dcc.Slider(id='opp-slider-2', min=0, max=1, step=0.0001)
+                        ], style={'display': 'none'})
+                    ],
+                    className="pretty_container four columns",
+                    id="cross-filter-options", style={'overflow-y': 'scroll', 'height': '700px'}
+                ),
+                html.Div(
+                    [dcc.Graph(id="predicties", figure=fig)],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="beste-indicatoren-chart", figure=chart)],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display"
+        ),
+        
+    ],
+    id="mainContainer",
+    style={"display": "flex", "flex-direction": "column"},
+)
+
+
+model_layout = html.Div(
+    [
+        dcc.Store(id="aggregate_data"),
+        # empty Div to trigger javascript file for graph resizing
+        html.Div(id="output-clientside"),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Img(
+                            src="./assets/datasense.png",
+                            id="plotly-image",
+                            style={
+                                "height": "60px",
+                                "width": "auto",
+                                "margin-bottom": "25px",
+                            },
+                        )
+                    ],
+                    className="one-third column",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H3(
+                                    "Stad Antwerpen",
+                                    style={"margin-bottom": "0px"},
+                                ),
+                                html.H5(
+                                    "Fietsgebruik", style={"margin-top": "0px"}
+                                ),
+                            ]
+                        )
+                    ],
+                    className="one-half column",
+                    id="title",
+                ),
+                html.Div(
+                    [
+                        html.A(
+                            html.Button("Predicties", id="predictie-button"),
+                            href="/",
+                        )
+                    ],
+                    className="one-third column",
+                    id="button",
+                ),
+            ],
+            id="header",
+            className="row flex-display",
+            style={"margin-bottom": "25px"},
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.P(
+                            "Betrouwbaarheid",
+                            className="control_label",
+                            id="sign-label"
+                        ),
+                        dcc.RangeSlider(
+                            id="year-slider",
+                            min=90,
+                            max=100,
+                            marks={
+                                90: '90%',
+                                95: '95%',
+                                98: '98%',
+                                99: '99%'
+                            },
+                            value=[95],
+                            className="dcc_control",
+                        ),
+                    ],
+                    className="pretty_container four columns",
+                    id="cross-filter-options",
+                )
+            ],
+            className="row flex-display",   
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="main_graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [html.H2("Model accuratie"), html.Img(src="assets/download2.png", style={'width': '80%', 'height':'80%'})],
+                    className="pretty_container five columns",
+                )
+            ],
+            className="row flex-display"
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="pie_graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="aggregate_graph")],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display",
+        ),
+    ],
+    id="mainContainer",
+    style={"display": "flex", "flex-direction": "column"},
+)

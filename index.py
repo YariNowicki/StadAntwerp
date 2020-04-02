@@ -3,25 +3,24 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
 from app import app
-from layouts import main
+from layouts import main_layout, model_layout
 import callbacks
-
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
 
-
-@app.callback(Output('page-content', 'children'),[Input('url', 'pathname')])
+@app.callback(Output('page-content', 'children'),
+              [Input('url', 'pathname')])
 def display_page(pathname):
     if pathname == '/':
-        return main
+         return main_layout
+    elif pathname == '/model':
+        return model_layout
     else:
         return '404'
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)
