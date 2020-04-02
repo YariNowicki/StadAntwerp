@@ -1,24 +1,13 @@
 # Import required libraries
-import pickle
 from app import app
-import copy
-import pathlib
-import dash
-import math
-import datetime as dt
 import pandas as pd
 import numpy as np
-from dash.dependencies import Input, Output, State, ClientsideFunction
-import dash_core_components as dcc
-import dash_html_components as html
+from dash.dependencies import Input, Output, State
 from df_calls import DataCalls
 from columns import Columns
 from keras.models import load_model
 from snow_calls import SnowFlakeCalls
-import matplotlib.pyplot as plt
 import plotly.express as px
-import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
 import warnings
 import statistics
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -49,6 +38,39 @@ links = {
     12: 2610,
     13: 2660
 }
+
+
+def get_encoding_data(postcode, inputs):
+    if postcode == 2000:
+        inputs = np.append(np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2018:
+        inputs = np.append(np.array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2020:
+        inputs = np.append(np.array([0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2030:
+        inputs = np.append(np.array([0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2040:
+        inputs = np.append(np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2050:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2060:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2100:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2140:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2170:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2180:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2600:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2610:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]).reshape(-1, 1), (inputs))
+    else:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    return inputs
+
 
 def get_key(val):
     for key, value in links.items():
@@ -85,43 +107,11 @@ def update_choropleth_mapbox_prediction(*vals):
                 inputs.append(-1)
         inwoners = dc.get_inwoners(vals[1])
         inputs[-6] = inputs[-6]/inwoners.values[0]
-        inputs[-5] = inputs[-5] / inwoners.values[0]
-        inputs[-4] = inputs[-4] / inwoners.values[0]
+        inputs[-5] = inputs[-5]/inwoners.values[0]
+        inputs[-4] = inputs[-4]/inwoners.values[0]
         inputs = dc.transfrom(inputs)
-        if vals[1] == 2000:
-            inputs = np.append(np.array([1,0,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2018:
-            inputs = np.append(np.array([0,1,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2020:
-            inputs = np.append(np.array([0,0,1,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2030:
-            inputs = np.append(np.array([0,0,0,1,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2040:
-            inputs = np.append(np.array([0,0,0,0,1,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2050:
-            inputs = np.append(np.array([0,0,0,0,0,1,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2060:
-            inputs = np.append(np.array([0,0,0,0,0,0,1,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2100:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,1,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2140:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,1,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2170:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,1,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2180:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,1,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2600:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,1,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2610:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,0,1]).reshape(-1,1),(inputs))
-        else:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        '''
-        row_df = pd.DataFrame(inputs, columns=Columns.input_columns)
-        row_df = row_df[Columns.input_columns]
-        '''
+        inputs = get_encoding_data(vals[1], inputs)
         preds = model.predict(inputs.reshape(1,-1))  # Predicts for each postcode
-
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
         # Generates map with the prediction values
         fig = create_map(df_pred)

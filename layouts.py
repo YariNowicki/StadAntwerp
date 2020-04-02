@@ -3,8 +3,7 @@ import plotly.express as px
 import dash_core_components as dcc
 import dash_html_components as html
 from snow_calls import SnowFlakeCalls
-import pandas as pd
-import statistics
+import callbacks
 dc = DataCalls()
 snow = SnowFlakeCalls()
 
@@ -17,33 +16,9 @@ df_pred = df_pred.drop(['index'], axis=1)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
 
-def create_map(df_pred):
-    # Generates map with the prediction values
-    fig = px.choropleth_mapbox(data_frame=df_pred, geojson=d, color='fiets_naar_werk_school', hover_data=["naam","postcode"],
-                               color_continuous_scale=px.colors.sequential.Blues, range_color=(20, 60), zoom=9.5,
-                               locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
-    fig.update_geos(fitbounds="locations", visible=False)
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
-    return fig
 
-fig = create_map(df_pred)
+fig = callbacks.create_map(df_pred)
 
-layout = dict(
-    autosize=True,
-    automargin=True,
-    margin=dict(l=30, r=30, b=20, t=40),
-    hovermode="closest",
-    plot_bgcolor="#F9F9F9",
-    paper_bgcolor="#F9F9F9",
-    legend=dict(font=dict(size=10), orientation="h"),
-    title="Satellite Overview",
-    mapbox=dict(
-        accesstoken=mapbox_token,
-        style="light",
-        center=dict(lon=-78.05, lat=42.54),
-        zoom=7,
-    ),
-)
 
 # Create app layout
 main_layout = html.Div(

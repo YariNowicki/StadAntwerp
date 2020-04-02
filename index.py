@@ -3,6 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+
 from app import app
 from layouts import main_layout, model_layout
 import callbacks
@@ -11,6 +12,7 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
+
 
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
