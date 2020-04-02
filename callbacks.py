@@ -119,45 +119,6 @@ def update_choropleth_mapbox_prediction(*vals):
     else:
         return initialize_map()
 
-'''
-#  Predictions
-@app.callback(Output('beste-indicatoren-chart', 'figure'),
-              [Input('btn-predictie', 'n_clicks')],
-              [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
-def create_bar_chart(*vals):
-    if vals[0] is not None:
-        # Load prediction model
-        model2 = load_model('model/NewDashModel.h5')
-        inputs = []  # Placeholder to later place the list as a row in the DataFrame
-        for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
-            if v is not None:
-                inputs.append(v)
-            else:
-                inputs.append(-1)
-        inwoners = dc.get_inwoners(vals[1])
-        inputs[-6] = inputs[-6]/inwoners.values[0]
-        inputs[-5] = inputs[-5] / inwoners.values[0]
-        inputs[-4] = inputs[-4] / inwoners.values[0]
-        inputs = dc.transfrom(inputs)
-        row_df = pd.DataFrame(inputs, columns=Columns.input_columns)
-        row_df = row_df[Columns.input_columns]
-        weight = model2.get_weights()
-        df_weight = pd.DataFrame(weight[0])
-        df_weight = df_weight.transpose()
-        df_weight.columns = row_df.columns
-        df_weight = df_weight.sort_values(axis=1, by=[0])
-        fig = go.Figure()
-        for column in df_weight.columns[:10]:
-            fig.add_trace(go.Bar(x=[column], y=[df_weight[column].loc[0]],name=column))
-        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
-        return fig
-    else:
-        fig = go.Figure()
-        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
-        return fig
-
-       ''' 
-
 
 def get_ci(z):
     box_data = []
@@ -289,6 +250,9 @@ def inwoners(value):
             return {}
     return {'display': 'none'}
 
+#
+# All callbacks below are used to either display the value of sliders in the UI or to fill the values in the sliders
+#
 
 # Aantal werkenden
 @app.callback(Output('werk-slider-0','value'),
@@ -406,8 +370,6 @@ def fill_werk_inputs(val):
     if val is None:
         val = 0
     return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(round(val,2))
-
-
 
 
 # Leerlingen die naar een secundaire school gaan binnen Antwerpen %
