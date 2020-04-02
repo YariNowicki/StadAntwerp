@@ -1,60 +1,38 @@
-# Dash Natural Gas Well Production
+# Demo Stad Anwerpen
 
-This is a demo of the Dash interactive Python framework developed by [Plotly](https://plot.ly/).
+## Packages
 
-Dash abstracts away all of the technologies and protocols required to build an interactive web-based application and is a simple and effective way to bind a user interface around your Python code. To learn more check out our [documentation](https://plot.ly/dash).
+1. dash 1.4.1
+2. dash-core-componenents 1.3.1
+3. dash-html-components 1.0.1
+4. keras 2.3.1
+5. matplotlib 3.1.3
+6. numpy 1.18.1
+7. pandas 1.0.3
+8. plotly 4.5.2
+9. scikit-learn 0.22.2
+10. snowflake-connector-python 2.2.2
+11. tensorflow 1.14.0
 
-## Getting Started
+## Project structure
 
-### Running the app locally
+### app.py
+This separation is required to avoid circular imports: the files containing the callback definitions require access to the Dash app instance however if this were imported from index.py, the initial loading of index.py would ultimately require itself to be already imported, which cannot be satisfied.
 
-First create a virtual environment with conda or venv inside a temp folder, then activate it.
+### index.py
+This python file is used to start the webpage, it loads different pages and imports their callbacks
 
-```
-virtualenv venv
+### callbacks.py
+All the callbacks of both the pages are placed here. A callback is a function, triggerd when one of their inputs change. It automatically updates the output. (More info: https://dash.plotly.com/basic-callbacks)
 
-# Windows
-venv\Scripts\activate
-# Or Linux
-source venv/bin/activate
+### layouts.py
+All the layouts get created here.
 
-```
+### columns.py (needs an update, but it works at the moment)
+Extra file, filled with array that contains column names. --> Makes the other files cleaner.
 
-Clone the git repo, then install the requirements with pip
+### df_calls.py
+Used to group functions, so the functions are not all in different places.
 
-```
-
-git clone https://github.com/plotly/dash-sample-apps
-cd dash-sample-apps/apps/dash-oil-and-gas
-pip install -r requirements.txt
-
-```
-
-Run the app
-
-```
-
-python app.py
-
-```
-
-## About the app
-
-This Dash app displays oil production in western New York. There are filters at the top of the app to update the graphs below. By selecting or hovering over data in one plot will update the other plots ('cross-filtering').
-
-## Built With
-
-- [Dash](https://dash.plot.ly/) - Main server and interactive components
-- [Plotly Python](https://plot.ly/python/) - Used to create the interactive plots
-
-## Screenshots
-
-The following are screenshots for the app in this repo:
-
-![animated1](screenshots/animated1.gif)
-
-![screenshot](screenshots/screenshot1.png)
-
-![screenshot](screenshots/screenshot2.png)
-
-![screenshot](screenshots/screenshot3.png)
+### snow_calls.py
+The functions that receive data from snowflake.
