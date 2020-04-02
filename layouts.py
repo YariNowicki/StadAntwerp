@@ -374,46 +374,16 @@ descriptive_layout = html.Div(
                 html.Div(
                     [
                         html.P(
-                            "Filter by construction date (or select range in histogram):",
+                            "Selecteer één of meerdere gemeenten:",
                             className="control_label",
                         ),
-                        dcc.RangeSlider(
-                            id="year_slider",
-                            min=1960,
-                            max=2017,
-                            value=[1990, 2010],
+                        dcc.Dropdown(
+                            id="postcode-dropdown",
+                            options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
+                            multi=True,
                             className="dcc_control",
+                            searchable=False
                         ),
-                        html.P("Filter by well status:", className="control_label"),
-                        dcc.RadioItems(
-                            id="well_status_selector",
-                            options=[
-                                {"label": "All ", "value": "all"},
-                                {"label": "Active only ", "value": "active"},
-                                {"label": "Customize ", "value": "custom"},
-                            ],
-                            value="active",
-                            labelStyle={"display": "inline-block"},
-                            className="dcc_control",
-                        ),
-                        dcc.Checklist(
-                            id="lock_selector",
-                            options=[{"label": "Lock camera", "value": "locked"}],
-                            className="dcc_control",
-                            value=[],
-                        ),
-                        html.P("Filter by well type:", className="control_label"),
-                        dcc.RadioItems(
-                            id="well_type_selector",
-                            options=[
-                                {"label": "All ", "value": "all"},
-                                {"label": "Productive only ", "value": "productive"},
-                                {"label": "Customize ", "value": "custom"},
-                            ],
-                            value="productive",
-                            labelStyle={"display": "inline-block"},
-                            className="dcc_control",
-                        )
                     ],
                     className="pretty_container four columns",
                     id="cross-filter-options",
@@ -423,34 +393,29 @@ descriptive_layout = html.Div(
                         html.Div(
                             [
                                 html.Div(
-                                    [html.H6(id="well_text"), html.P("No. of Wells")],
-                                    id="wells",
+                                    [html.H6(id="text-inwoners"), html.P("Aantal inwoners")],
+                                    id="inwoners",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="gasText"), html.P("Gas")],
-                                    id="gas",
+                                    [html.H6(id="text-leerlingen"), html.P("Aantal leerlingen")],
+                                    id="leerlingen",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="oilText"), html.P("Oil")],
-                                    id="oil",
+                                    [html.H6(id="text-werkenden"), html.P("Aantal werkenden")],
+                                    id="werkenden",
                                     className="mini_container",
                                 ),
                                 html.Div(
-                                    [html.H6(id="waterText"), html.P("Water")],
-                                    id="water",
+                                    [html.H6(id="text-dichtheid"), html.P("Populatie dichtheid (personen per km²)")],
+                                    id="dichtheid",
                                     className="mini_container",
                                 ),
                             ],
                             id="info-container",
                             className="row container-display",
-                        ),
-                        html.Div(
-                            [dcc.Graph(id="count_graph")],
-                            id="countGraphContainer",
-                            className="pretty_container",
-                        ),
+                        )
                     ],
                     id="right-column",
                     className="eight columns",
@@ -461,11 +426,11 @@ descriptive_layout = html.Div(
         html.Div(
             [
                 html.Div(
-                    [dcc.Graph(id="main_graph")],
+                    [dcc.Graph(id="fiets-graph")],
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [dcc.Graph(id="individual_graph")],
+                    [dcc.Graph(id="leerlingen-graph")],
                     className="pretty_container five columns",
                 ),
             ],
@@ -474,7 +439,7 @@ descriptive_layout = html.Div(
         html.Div(
             [
                 html.Div(
-                    [dcc.Graph(id="pie_graph")],
+                    [dcc.Graph(id="inwoners-graph")],
                     className="pretty_container seven columns",
                 ),
                 html.Div(

@@ -17,12 +17,16 @@ def login():
     return cs
 
 
+
+
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
     DROPDOWN_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DROPDOWN_LIST"
     INPUT_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DASH_INPUT"
     INWONERS_QUERY = "select postcode_bk, aantal_inwoners from DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_DATA WHERE jaar = 2020"
+    FIETSGEBRUIK_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.FIETSGEBRUIK"
+    SCHOOL_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.SCHOOL_LEERLINGEN"
 
     def get_geo_data(self):
         print("Getting snowflake data...(geo data)")
@@ -96,3 +100,49 @@ class SnowFlakeCalls:
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=['postcode','aantal_inwoners'])
         return df
+
+    def get_fietsgebruik(self, postcodes):
+        postcodes = list(map(str, postcodes))
+        cs = login()
+        cs.execute(self.FIETSGEBRUIK_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=['postcode', 'jaar', 'fietsers'])
+        df = df[df['postcode'].isin(postcodes)]
+        df = self.apply_names(df)
+        return df
+
+    def get_inwoners_display(self, postcodes):
+        postcodes = list(map(str, postcodes))
+        cs = login()
+        cs.execute(self.INWONERS_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=['postcode','inwoners'])
+        df = df[df['postcode'].isin(postcodes)]
+        df = self.apply_names(df)
+        return df
+
+    def get_school_leerlingen_display(self, postcodes):
+        postcodes = list(map(str, postcodes))
+        cs = login()
+        cs.execute(self.SCHOOL_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=['postcode','basis_a', 'so_a'])
+        df = df[df['postcode'].isin(postcodes)]
+        df = self.apply_names(df)
+        return df
+
+    def get_werk_data(self, postcodes):
+        postcodes = list(map(str, postcodes))
+        cs = login()
+        cs.execute(self.SCHOOL_QUERY)
+
+    def apply_names(self, df):
+        names = self.get_dropdown_list()
+        def f(row):
+            for name in names:
+                if str(name[0]) == str(row['postcode']):
+                    return name[1]
+            return "NOT FOUND"
+        df['naam'] = df.apply(f, axis=1)
+        return df
+
