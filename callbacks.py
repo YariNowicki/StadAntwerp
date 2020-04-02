@@ -105,7 +105,7 @@ def display_fietsgebruik(value):
               [Input('postcode-dropdown', 'value')])
 def display_inwoners(value):
     df = snow.get_inwoners_display(value)
-    fig = px.bar(df, x="naam", y="inwoners", color='naam')
+    fig = go.Figure(data=[go.Pie(labels=df["naam"], values=df["inwoners"], hole=.3)])
     fig.update_layout(title='Aantal inwoners')
     return fig
 
@@ -119,6 +119,31 @@ def display_leerlingen(value):
         go.Bar(name='Secundair onderwijs', x=df["naam"], y=df["so_a"])
     ])
     fig.update_layout(title="% Leerlingen die naar school gaan binnen Antwerpen (2018)")
+    return fig
+
+
+@app.callback(Output('status-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_leerlingen(value):
+    df = snow.get_werk_data(value)
+    data = []
+    for index, row in df.iterrows():
+        r = [row['naam'], row['jaar'], 'loontrekkenden', int(row['loontrekkenden'])]
+        r2 = [row['naam'], row['jaar'], 'werkzoekenden', int(row['werkzoekenden'])]
+        r3 = [row['naam'], row['jaar'], 'zelfstandigen', int(row['zelfstandigen'])]
+        r4 = [row['naam'], row['jaar'], 'inactieven', int(row['inactieven'])]
+        data.append(r)
+        data.append(r2)
+        data.append(r3)
+        data.append(r4)
+    display = pd.DataFrame(data, columns=['naam', 'jaar', 'label', 'value'])
+    df = display.copy()
+    '''
+    fig = px.sunburst(display, path=['naam', 'label'], values='value')
+    fig.update_layout(title="Status inwoners")
+    '''
+    fig = px.sunburst(df, path=['naam','label'], values='value')
+    fig.update_layout(title="Status inwoners (2016)")
     return fig
 
 

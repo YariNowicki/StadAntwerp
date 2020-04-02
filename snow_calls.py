@@ -27,6 +27,7 @@ class SnowFlakeCalls:
     INWONERS_QUERY = "select postcode_bk, aantal_inwoners from DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_DATA WHERE jaar = 2020"
     FIETSGEBRUIK_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.FIETSGEBRUIK"
     SCHOOL_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.SCHOOL_LEERLINGEN"
+    INWONER_STATUS_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.INWONER_STATUS"
 
     def get_geo_data(self):
         print("Getting snowflake data...(geo data)")
@@ -134,7 +135,12 @@ class SnowFlakeCalls:
     def get_werk_data(self, postcodes):
         postcodes = list(map(str, postcodes))
         cs = login()
-        cs.execute(self.SCHOOL_QUERY)
+        cs.execute(self.INWONER_STATUS_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=['postcode', 'jaar','loontrekkenden', 'werkzoekenden','zelfstandigen','inactieven'])
+        df = df[df['postcode'].isin(postcodes)]
+        df = self.apply_names(df)
+        return df
 
     def apply_names(self, df):
         names = self.get_dropdown_list()

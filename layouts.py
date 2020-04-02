@@ -392,26 +392,7 @@ descriptive_layout = html.Div(
                     [
                         html.Div(
                             [
-                                html.Div(
-                                    [html.H6(id="text-inwoners"), html.P("Aantal inwoners")],
-                                    id="inwoners",
-                                    className="mini_container",
-                                ),
-                                html.Div(
-                                    [html.H6(id="text-leerlingen"), html.P("Aantal leerlingen")],
-                                    id="leerlingen",
-                                    className="mini_container",
-                                ),
-                                html.Div(
-                                    [html.H6(id="text-werkenden"), html.P("Aantal werkenden")],
-                                    id="werkenden",
-                                    className="mini_container",
-                                ),
-                                html.Div(
-                                    [html.H6(id="text-dichtheid"), html.P("Populatie dichtheid (personen per km²)")],
-                                    id="dichtheid",
-                                    className="mini_container",
-                                ),
+
                             ],
                             id="info-container",
                             className="row container-display",
@@ -443,7 +424,7 @@ descriptive_layout = html.Div(
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [dcc.Graph(id="aggregate_graph")],
+                    [dcc.Graph(id="status-graph")],
                     className="pretty_container five columns",
                 ),
             ],
