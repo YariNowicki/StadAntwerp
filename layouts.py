@@ -92,7 +92,7 @@ main_layout = html.Div(
                         html.Br(),
                         dcc.Dropdown(id='choose-postcode',
                              options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
-                             value=2000),
+                             value=2000, clearable=False),
                         html.Br(),
                         html.Br(),
                         html.Button('Inwoners', id='btn-inwoners', style={'width': '100%'}),
@@ -265,6 +265,7 @@ model_layout = html.Div(
                             id="year-slider",
                             min=90,
                             max=100,
+                            step=None,
                             marks={
                                 90: '90%',
                                 95: '95%',
@@ -382,7 +383,9 @@ descriptive_layout = html.Div(
                             options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
                             multi=True,
                             className="dcc_control",
-                            searchable=False
+                            searchable=False,
+                            value=[2000],
+                            clearable=False
                         ),
                     ],
                     className="pretty_container four columns",
@@ -421,7 +424,7 @@ descriptive_layout = html.Div(
             [
                 html.Div(
                     [dcc.Graph(id="inwoners-graph")],
-                    className="pretty_container seven columns",
+                    className="pretty_container sevens columns",
                 ),
                 html.Div(
                     [dcc.Graph(id="status-graph")],

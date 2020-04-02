@@ -106,7 +106,7 @@ def display_fietsgebruik(value):
 def display_inwoners(value):
     df = snow.get_inwoners_display(value)
     fig = go.Figure(data=[go.Pie(labels=df["naam"], values=df["inwoners"], hole=.3)])
-    fig.update_layout(title='Aantal inwoners')
+    fig.update_layout(title='Aantal inwoners (2020)')
     return fig
 
 
