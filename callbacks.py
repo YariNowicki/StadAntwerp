@@ -1,26 +1,16 @@
 # Import required libraries
-import pickle
 from app import app
-import copy
-import pathlib
-import dash
-import math
-import datetime as dt
 import pandas as pd
 import numpy as np
-from dash.dependencies import Input, Output, State, ClientsideFunction
-import dash_core_components as dcc
-import dash_html_components as html
+from dash.dependencies import Input, Output, State
 from df_calls import DataCalls
 from columns import Columns
 from keras.models import load_model
 from snow_calls import SnowFlakeCalls
-import matplotlib.pyplot as plt
 import plotly.express as px
-import dash_bootstrap_components as dbc
-import plotly.graph_objects as go
 import warnings
 import statistics
+import plotly.graph_objects as go
 warnings.simplefilter(action='ignore', category=FutureWarning)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
@@ -50,6 +40,39 @@ links = {
     13: 2660
 }
 
+
+def get_encoding_data(postcode, inputs):
+    if postcode == 2000:
+        inputs = np.append(np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2018:
+        inputs = np.append(np.array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2020:
+        inputs = np.append(np.array([0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2030:
+        inputs = np.append(np.array([0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2040:
+        inputs = np.append(np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2050:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2060:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2100:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2140:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2170:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2180:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2600:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]).reshape(-1, 1), (inputs))
+    elif postcode == 2610:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]).reshape(-1, 1), (inputs))
+    else:
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+    return inputs
+
+
 def get_key(val):
     for key, value in links.items():
          if val == value:
@@ -69,6 +92,62 @@ def create_map(df_pred):
     return fig
 
 
+@app.callback(Output('fiets-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_fietsgebruik(value):
+    df = snow.get_fietsgebruik(value)
+    df = df.sort_values(by=['jaar'])
+    fig = px.line(df, x="jaar", y="fietsers", color='naam')
+    fig.update_layout(title='% regelmatige fietsgebruikers naar het werk/school')
+    return fig
+
+@app.callback(Output('inwoners-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_inwoners(value):
+    df = snow.get_inwoners_display(value)
+    fig = go.Figure(data=[go.Pie(labels=df["naam"], values=df["inwoners"], hole=.3)])
+    fig.update_layout(title='Aantal inwoners')
+    return fig
+
+
+@app.callback(Output('leerlingen-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_leerlingen(value):
+    df = snow.get_school_leerlingen_display(value)
+    fig = go.Figure(data=[
+        go.Bar(name='Basisonderwijs', x=df["naam"], y=df["basis_a"]),
+        go.Bar(name='Secundair onderwijs', x=df["naam"], y=df["so_a"])
+    ])
+    fig.update_layout(title="% Leerlingen die naar school gaan binnen Antwerpen (2018)")
+    return fig
+
+
+@app.callback(Output('status-graph', 'figure'),
+              [Input('postcode-dropdown', 'value')])
+def display_leerlingen(value):
+    df = snow.get_werk_data(value)
+    data = []
+    for index, row in df.iterrows():
+        r = [row['naam'], row['jaar'], 'loontrekkenden', int(row['loontrekkenden'])]
+        r2 = [row['naam'], row['jaar'], 'werkzoekenden', int(row['werkzoekenden'])]
+        r3 = [row['naam'], row['jaar'], 'zelfstandigen', int(row['zelfstandigen'])]
+        r4 = [row['naam'], row['jaar'], 'inactieven', int(row['inactieven'])]
+        data.append(r)
+        data.append(r2)
+        data.append(r3)
+        data.append(r4)
+    display = pd.DataFrame(data, columns=['naam', 'jaar', 'label', 'value'])
+    df = display.copy()
+    '''
+    fig = px.sunburst(display, path=['naam', 'label'], values='value')
+    fig.update_layout(title="Status inwoners")
+    '''
+    fig = px.sunburst(df, path=['naam','label'], values='value')
+    fig.update_layout(title="Status inwoners (2016)")
+    return fig
+
+
+
 #  Predictions
 @app.callback(Output('predicties', 'figure'),
               [Input('btn-predictie', 'n_clicks')],
@@ -85,88 +164,17 @@ def update_choropleth_mapbox_prediction(*vals):
                 inputs.append(-1)
         inwoners = dc.get_inwoners(vals[1])
         inputs[-6] = inputs[-6]/inwoners.values[0]
-        inputs[-5] = inputs[-5] / inwoners.values[0]
-        inputs[-4] = inputs[-4] / inwoners.values[0]
+        inputs[-5] = inputs[-5]/inwoners.values[0]
+        inputs[-4] = inputs[-4]/inwoners.values[0]
         inputs = dc.transfrom(inputs)
-        if vals[1] == 2000:
-            inputs = np.append(np.array([1,0,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2018:
-            inputs = np.append(np.array([0,1,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2020:
-            inputs = np.append(np.array([0,0,1,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2030:
-            inputs = np.append(np.array([0,0,0,1,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2040:
-            inputs = np.append(np.array([0,0,0,0,1,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2050:
-            inputs = np.append(np.array([0,0,0,0,0,1,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2060:
-            inputs = np.append(np.array([0,0,0,0,0,0,1,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2100:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,1,0,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2140:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,1,0,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2170:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,1,0,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2180:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,1,0,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2600:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,1,0]).reshape(-1,1),(inputs))
-        elif vals[1] == 2610:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,0,1]).reshape(-1,1),(inputs))
-        else:
-            inputs = np.append(np.array([0,0,0,0,0,0,0,0,0,0,0,0,0]).reshape(-1,1),(inputs))
-        '''
-        row_df = pd.DataFrame(inputs, columns=Columns.input_columns)
-        row_df = row_df[Columns.input_columns]
-        '''
+        inputs = get_encoding_data(vals[1], inputs)
         preds = model.predict(inputs.reshape(1,-1))  # Predicts for each postcode
-
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
         # Generates map with the prediction values
         fig = create_map(df_pred)
         return fig
     else:
         return initialize_map()
-
-'''
-#  Predictions
-@app.callback(Output('beste-indicatoren-chart', 'figure'),
-              [Input('btn-predictie', 'n_clicks')],
-              [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
-def create_bar_chart(*vals):
-    if vals[0] is not None:
-        # Load prediction model
-        model2 = load_model('model/NewDashModel.h5')
-        inputs = []  # Placeholder to later place the list as a row in the DataFrame
-        for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
-            if v is not None:
-                inputs.append(v)
-            else:
-                inputs.append(-1)
-        inwoners = dc.get_inwoners(vals[1])
-        inputs[-6] = inputs[-6]/inwoners.values[0]
-        inputs[-5] = inputs[-5] / inwoners.values[0]
-        inputs[-4] = inputs[-4] / inwoners.values[0]
-        inputs = dc.transfrom(inputs)
-        row_df = pd.DataFrame(inputs, columns=Columns.input_columns)
-        row_df = row_df[Columns.input_columns]
-        weight = model2.get_weights()
-        df_weight = pd.DataFrame(weight[0])
-        df_weight = df_weight.transpose()
-        df_weight.columns = row_df.columns
-        df_weight = df_weight.sort_values(axis=1, by=[0])
-        fig = go.Figure()
-        for column in df_weight.columns[:10]:
-            fig.add_trace(go.Bar(x=[column], y=[df_weight[column].loc[0]],name=column))
-        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
-        return fig
-    else:
-        fig = go.Figure()
-        fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
-        return fig
-
-       ''' 
 
 
 def get_ci(z):
@@ -299,6 +307,9 @@ def inwoners(value):
             return {}
     return {'display': 'none'}
 
+#
+# All callbacks below are used to either display the value of sliders in the UI or to fill the values in the sliders
+#
 
 # Aantal werkenden
 @app.callback(Output('werk-slider-0','value'),
@@ -416,8 +427,6 @@ def fill_werk_inputs(val):
     if val is None:
         val = 0
     return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(round(val,2))
-
-
 
 
 # Leerlingen die naar een secundaire school gaan binnen Antwerpen %

@@ -3,8 +3,7 @@ import plotly.express as px
 import dash_core_components as dcc
 import dash_html_components as html
 from snow_calls import SnowFlakeCalls
-import pandas as pd
-import statistics
+import callbacks
 dc = DataCalls()
 snow = SnowFlakeCalls()
 
@@ -17,33 +16,9 @@ df_pred = df_pred.drop(['index'], axis=1)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
 
-def create_map(df_pred):
-    # Generates map with the prediction values
-    fig = px.choropleth_mapbox(data_frame=df_pred, geojson=d, color='fiets_naar_werk_school', hover_data=["naam","postcode"],
-                               color_continuous_scale=px.colors.sequential.Blues, range_color=(20, 60), zoom=9.5,
-                               locations="id", featureidkey='properties.postcode', center={"lat": 51.25, "lon": 4.4})
-    fig.update_geos(fitbounds="locations", visible=False)
-    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
-    return fig
 
-fig = create_map(df_pred)
+fig = callbacks.create_map(df_pred)
 
-layout = dict(
-    autosize=True,
-    automargin=True,
-    margin=dict(l=30, r=30, b=20, t=40),
-    hovermode="closest",
-    plot_bgcolor="#F9F9F9",
-    paper_bgcolor="#F9F9F9",
-    legend=dict(font=dict(size=10), orientation="h"),
-    title="Satellite Overview",
-    mapbox=dict(
-        accesstoken=mapbox_token,
-        style="light",
-        center=dict(lon=-78.05, lat=42.54),
-        zoom=7,
-    ),
-)
 
 # Create app layout
 main_layout = html.Div(
@@ -89,6 +64,10 @@ main_layout = html.Div(
                         html.A(
                             html.Button("Model", id="model-button"),
                             href="/model",
+                        ),
+                        html.A(
+                            html.Button("Descriptive", id="desc-button"),
+                            href="/descriptive",
                         )
                     ],
                     className="one-third column",
@@ -259,6 +238,10 @@ model_layout = html.Div(
                         html.A(
                             html.Button("Predicties", id="predictie-button"),
                             href="/",
+                        ),
+                        html.A(
+                            html.Button("Descriptive", id="desc-button"),
+                            href="/descriptive",
                         )
                     ],
                     className="one-third column",
@@ -323,6 +306,129 @@ model_layout = html.Div(
                 ),
             ],
             className="row flex-display",
+        ),
+    ],
+    id="mainContainer",
+    style={"display": "flex", "flex-direction": "column"},
+)
+
+descriptive_layout = html.Div(
+    [
+        dcc.Store(id="aggregate_data"),
+        # empty Div to trigger javascript file for graph resizing
+        html.Div(id="output-clientside"),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.Img(
+                            src="./assets/datasense.png",
+                            id="plotly-image",
+                            style={
+                                "height": "60px",
+                                "width": "auto",
+                                "margin-bottom": "25px",
+                            },
+                        )
+                    ],
+                    className="one-third column",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H3(
+                                    "Stad Antwerpen",
+                                    style={"margin-bottom": "0px"},
+                                ),
+                                html.H5(
+                                    "Fiets gebruik", style={"margin-top": "0px"}
+                                ),
+                            ]
+                        )
+                    ],
+                    className="one-half column",
+                    id="title",
+                ),
+                html.Div(
+                    [
+                        html.A(
+                            html.Button("Predicites", id="pred-button"),
+                            href="/",
+                        ),
+                        html.A(
+                            html.Button("Model", id="model-button"),
+                            href="/model",
+                        )
+                    ],
+                    className="one-third column",
+                    id="button",
+                ),
+            ],
+            id="header",
+            className="row flex-display",
+            style={"margin-bottom": "25px"},
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [
+                        html.P(
+                            "Selecteer één of meerdere gemeenten:",
+                            className="control_label",
+                        ),
+                        dcc.Dropdown(
+                            id="postcode-dropdown",
+                            options=[{'label': i[1], 'value': i[0]} for i in snow.get_dropdown_list()],
+                            multi=True,
+                            className="dcc_control",
+                            searchable=False
+                        ),
+                    ],
+                    className="pretty_container four columns",
+                    id="cross-filter-options",
+                ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+
+                            ],
+                            id="info-container",
+                            className="row container-display",
+                        )
+                    ],
+                    id="right-column",
+                    className="eight columns",
+                ),
+            ],
+            className="row flex-display",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="fiets-graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="leerlingen-graph")],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display",
+        ),
+        html.Div(
+            [
+                html.Div(
+                    [dcc.Graph(id="inwoners-graph")],
+                    className="pretty_container seven columns",
+                ),
+                html.Div(
+                    [dcc.Graph(id="status-graph")],
+                    className="pretty_container five columns",
+                ),
+            ],
+            className="row flex-display"
         ),
     ],
     id="mainContainer",
