@@ -352,7 +352,7 @@ def fill_belast_inputs(postcode):
               [Input('choose-postcode', 'value')])
 def fill_dichtheid_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.dichtheid[0]]
+    return df['dichtheid']
 
 
 # Theoretisch geschoolden
@@ -360,7 +360,7 @@ def fill_dichtheid_inputs(postcode):
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.secundair[0]]
+    return df['theorestisch_geschoolden']
 
 @app.callback(Output('so-0','children'),
               [Input('secundair-slider-0', 'value')])
@@ -375,7 +375,7 @@ def fill_werk_inputs(val):
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.vertraging[0]]
+    return df['al_so_geen_vertraging']
 
 
 @app.callback(Output('vertraging-0','children'),

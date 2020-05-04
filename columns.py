@@ -5,12 +5,6 @@ class Columns:
        'voorstelling_bezocht', 'sport_beoefend']
        opp = ['opp_sportterreinen', 'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen']
        plaatsen = ['plaatsen_buurtparkings','plaatsen_fietsenstallingen','plaatsen_velo_stations']
-       so = ['al_so_binnen_a', 'al_so_buiten_a']
-       basis = ['al_basis_binnen_a', 'al_basis_buiten_a']
-       stroom = ['al_a_stroom', 'al_b_stroom']
-       vertraging = ['al_so_geen_vertraging', 'al_so_vertraging', 'al_so_meer_vertraging']
-       secundair = ['theorestisch_geschoolden']
-       dichtheid = ['dichtheid']
        total_columns_inputs = ['werkenden',
               'belastingplichtigen',
               'gemiddeld_netto_belastbaar_inkomen_per_persoon',
