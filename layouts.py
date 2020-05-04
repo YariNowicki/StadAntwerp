@@ -104,8 +104,6 @@ main_layout = html.Div(
                             dcc.Slider(id='belast-slider-0',min=0,max=100,step=0.01),
                             html.P("Gemiddeld netto belastbaar inkomen", id="belast-0"),
                             dcc.Input(id='belast-input-0',type='number'),
-                            html.P("Opbrengst personenbelasting per persoon", id="belast-1"),
-                            dcc.Input(id='belast-input-1',type='number'),
                             html.P("Dichtheid (km²)",id="dichtheid-0"),
                             dcc.Input(id='dichtheid-input-0',type='number')
                         ], style={'display': 'none'}),
@@ -118,12 +116,8 @@ main_layout = html.Div(
                             dcc.Slider(id='secundair-slider-0', min=0, max=100, step=0.01),
                             html.P("Leerlingen zonder vertraging %", id="vertraging-0"),
                             dcc.Slider(id='vertraging-slider-0', min=0, max=100, step=0.01),
-                            html.P("Leerlingen A-stroom %", id="stroom-0"),
-                            dcc.Slider(id='stroom-slider-0', min=0, max=100, step=0.01),
-                            html.P("Leerlingen die naar een basisschool gaan binnen Antwerpen %", id="basis-0"),
-                            dcc.Slider(id='basis-slider-0', min=0, max=100, step=0.01),
-                            html.P("Leerlingen die naar een secundaire school gaan binnen Antwerpen %", id="so-a-0"),
-                            dcc.Slider(id='so-slider-0', min=0, max=100, step=0.01)
+                            html.P("Leerlingen die naar een school gaan binnen Antwerpen %", id="school-0"),
+                            dcc.Slider(id='school-slider-0', min=0, max=100, step=0.01)
                         ], style={'display': 'none'}),
                         html.Br(),
                         html.Br(),
@@ -134,8 +128,6 @@ main_layout = html.Div(
                             dcc.Slider(id='enq-slider-0', min=0, max=100, step=0.01),
                             html.P("Boek gelezen %", id="enq-1"),
                             dcc.Slider(id='enq-slider-1', min=0, max=100, step=0.01),
-                            html.P("Museum bezocht %", id="enq-2"),
-                            dcc.Slider(id='enq-slider-2', min=0, max=100, step=0.01),
                             html.P("Park bezocht %", id="enq-3"),
                             dcc.Slider(id='enq-slider-3', min=0, max=100, step=0.01),
                             html.P("Restaurant of café bezocht %", id="enq-4"),
@@ -146,7 +138,7 @@ main_layout = html.Div(
                             dcc.Slider(id='enq-slider-6', min=0, max=100, step=0.01),
                             html.P("Sport beoefend %", id="enq-7"),
                             dcc.Slider(id='enq-slider-7', min=0, max=100, step=0.01)
-                        ], style={'display': 'none'}),
+                        ], style={'display': 'none'}), 
                         html.Br(),
                         html.Br(),
                         html.Button('parkings en velostations', id='btn-plaatsen', style={'width': '100%'}),
@@ -287,7 +279,7 @@ model_layout = html.Div(
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [html.H2("Model accuratie"), dcc.Graph(DataCalls.get_accuracy())],
+                    [html.H2("Model accuratie"), dcc.Graph("accuracy_graph", figure=dc.get_accuracy())],
                     className="pretty_container five columns",
                 )
             ],

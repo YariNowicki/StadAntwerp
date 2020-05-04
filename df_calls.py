@@ -10,6 +10,8 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 class DataCalls:
     snow = SnowFlakeCalls()
     df = snow.get_input_data()
+    df['school_binnen_antwerpen'] = df[['al_basis_binnen_a', 'al_so_binnen_a']].mean(axis=1)
+    df = df.drop(['al_basis_binnen_a', 'al_so_binnen_a','al_a_stroom','opbrengst_aanvullende_personenbelasting_per_belast','opbrengst_aanvullende_personenbelasting_per_belast'], axis=1)
     inputs = df[Columns.input_columns]
     min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1))  # puts everything in a range between 0 and 1
     min_max_scaler.fit(inputs)
@@ -19,7 +21,7 @@ class DataCalls:
 
     def get_inp_data(self, postcode):
         df_inp = self.df.copy()
-        df_inp = df_inp[df_inp['postcode'] == str(postcode)]
+        df_inp = df_inp[df_inp['postcode'] == postcode]
         df_inp = df_inp[Columns.input_columns]
         return df_inp.iloc[-5] 
 
@@ -28,7 +30,7 @@ class DataCalls:
 
     def get_inwoners(self, postcode):
         df_inp = self.snow.get_inwoners()
-        df_inp = df_inp[df_inp['postcode'] == str(postcode)]
+        df_inp = df_inp[df_inp['postcode'] == postcode]
         return df_inp['aantal_inwoners']
 
 
@@ -48,7 +50,7 @@ class DataCalls:
         return fig
     '''
 
-    def get_accuracy():
+    def get_accuracy(self):
         data = [[47.98647689819336, 31.554601669311523, 30.945764541625977, 51.00542449951172, 27.1306095123291, 
                 59.93107604980469, 50.98125457763672, 41.13679504394531, 35.689308166503906, 32.51605987548828, 
                 52.912109375],

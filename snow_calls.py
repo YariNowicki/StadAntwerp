@@ -24,10 +24,11 @@ class SnowFlakeCalls:
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
     DROPDOWN_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DROPDOWN_LIST"
     INPUT_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DASH_INPUT"
-    INWONERS_QUERY = "select postcode_bk, aantal_inwoners from DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_DATA WHERE jaar = 2020"
+    INWONERS_QUERY = "select postzone, aantal_inwoners from DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_DATA WHERE jaar = 2020"
     FIETSGEBRUIK_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.FIETSGEBRUIK"
     SCHOOL_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.SCHOOL_LEERLINGEN"
     INWONER_STATUS_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.INWONER_STATUS"
+    SCALE_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.SCALE_DATA"
 
     def get_geo_data(self):
         print("Getting snowflake data...(geo data)")
@@ -92,6 +93,7 @@ class SnowFlakeCalls:
         cs.execute(self.INPUT_QUERY)
         data = cs.fetchall()
         df = pd.DataFrame(data, columns=Columns.total_columns)
+        df = df[Columns.total_columns]
         print("Done!")
         return df
 

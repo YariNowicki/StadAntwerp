@@ -43,33 +43,29 @@ links = {
 
 def get_encoding_data(postcode, inputs):
     if postcode == 2000:
-        inputs = np.append(np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2018:
-        inputs = np.append(np.array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2020:
-        inputs = np.append(np.array([0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
-    elif postcode == 2030:
-        inputs = np.append(np.array([0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
-    elif postcode == 2040:
-        inputs = np.append(np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2050:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2060:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2100:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2140:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2170:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2180:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2600:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]).reshape(-1, 1), (inputs))
     elif postcode == 2610:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]).reshape(-1, 1), (inputs))
     else:
-        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
+        inputs = np.append(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]).reshape(-1, 1), (inputs))
     return inputs
 
 
@@ -106,7 +102,7 @@ def display_fietsgebruik(value):
 def display_inwoners(value):
     df = snow.get_inwoners_display(value)
     fig = go.Figure(data=[go.Pie(labels=df["naam"], values=df["inwoners"], hole=.3)])
-    fig.update_layout(title='Aantal inwoners (2020)')
+    fig.update_layout(title='Aantal inwoners')
     return fig
 
 
@@ -168,6 +164,8 @@ def update_choropleth_mapbox_prediction(*vals):
         inputs[-4] = inputs[-4]/inwoners.values[0]
         inputs = dc.transfrom(inputs)
         inputs = get_encoding_data(vals[1], inputs)
+        new_order = [13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,1,2,3,4,5,6,7,8,9,10,11,12,30]
+        inputs = inputs[new_order]
         preds = model.predict(inputs.reshape(1,-1))  # Predicts for each postcode
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
         # Generates map with the prediction values
@@ -316,7 +314,7 @@ def inwoners(value):
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.werk[0]]
+    return df['werkenden']
 
 
 @app.callback(Output('werk-0','children'),
@@ -331,7 +329,7 @@ def fill_werk_inputs(val):
               [Input('choose-postcode', 'value')])
 def fill_belast_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.belastingplichtigen[0]]
+    return df['belastingplichtigen']
 
 
 @app.callback(Output('belastplicht-0','children'),
@@ -346,15 +344,7 @@ def fill_werk_inputs(val):
               [Input('choose-postcode', 'value')])
 def fill_belast_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.belasting[0]]
-
-
-# Opbrengst personenbelasting per persoon
-@app.callback(Output('belast-input-1','value'),
-              [Input('choose-postcode', 'value')])
-def fill_belast_inputs(postcode):
-    df = dc.get_inp_data(postcode)
-    return df[Columns.belasting[1]]
+    return df['gemiddeld_netto_belastbaar_inkomen_per_persoon']
 
 
 # Dichtheid
@@ -396,69 +386,22 @@ def fill_werk_inputs(val):
     return "Leerlingen zonder vertraging: {}%".format(round(val,2))
 
 
-# Leerlingen A-stroom
-@app.callback(Output('stroom-slider-0','value'),
+
+# Leerlingen die naar een school gaan binnen Antwerpen
+@app.callback(Output('school-slider-0','value'),
               [Input('choose-postcode', 'value')])
 def fill_werk_inputs(postcode):
     df = dc.get_inp_data(postcode)
-    return df[Columns.stroom[0]]
+    return df['school_binnen_antwerpen']
 
 
-@app.callback(Output('stroom-0','children'),
-              [Input('stroom-slider-0', 'value')])
+@app.callback(Output('school-0','children'),
+              [Input('school-slider-0', 'value')])
 def fill_werk_inputs(val):
     if val is None:
         val = 0
-    return "Leerlingen A-stroom: {}%".format(round(val,2))
+    return "Leerlingen die naar een school gaan binnen Antwerpen: {}%".format(round(val,2))
 
-
-
-# Leerlingen die naar een basisschool gaan binnen Antwerpen
-@app.callback(Output('basis-slider-0','value'),
-              [Input('choose-postcode', 'value')])
-def fill_werk_inputs(postcode):
-    df = dc.get_inp_data(postcode)
-    return df[Columns.basis[0]]
-
-
-@app.callback(Output('basis-0','children'),
-              [Input('basis-slider-0', 'value')])
-def fill_werk_inputs(val):
-    if val is None:
-        val = 0
-    return "Leerlingen die naar een basisschool gaan binnen Antwerpen: {}%".format(round(val,2))
-
-
-# Leerlingen die naar een secundaire school gaan binnen Antwerpen %
-@app.callback(Output('so-slider-0','value'),
-              [Input('choose-postcode', 'value')])
-def fill_werk_inputs(postcode):
-    df = dc.get_inp_data(postcode)
-    return df[Columns.so[0]]
-
-
-@app.callback(Output('so-a-0','children'),
-              [Input('so-slider-0', 'value')])
-def fill_werk_inputs(val):
-    if val is None:
-        val = 0
-    return "Leerlingen die naar een secundaire school gaan binnen Antwerpen: {}%".format(round(val,2))
-
-
-#  Kotdichtheid
-@app.callback(Output('kotdichtheid-input-0','value'),
-              [Input('choose-postcode', 'value')])
-def fill_werk_inputs(postcode):
-    df = dc.get_inp_data(postcode)
-    return df[Columns.kot[0]]
-
-
-@app.callback(Output('kot-0','children'),
-              [Input('kotdichtheid-input-0', 'value')])
-def fill_werk_inputs(val):
-    if val is None:
-        val = 0
-    return "Kotdichtheid: {}%".format(val)
 
 
 # Bibliotheek bezocht
@@ -492,21 +435,6 @@ def fill_werk_inputs(val):
         val = 0
     return "Boek gelezen: {}%".format(val)
 
-
-# Museum bezocht
-@app.callback(Output('enq-slider-2','value'),
-              [Input('choose-postcode', 'value')])
-def fill_werk_inputs(postcode):
-    df = dc.get_inp_data(postcode)
-    return df[Columns.enq[2]]
-
-
-@app.callback(Output('enq-2','children'),
-              [Input('enq-slider-2', 'value')])
-def fill_werk_inputs(val):
-    if val is None:
-        val = 0
-    return "Museum bezocht: {}%".format(val)
 
 # Park bezocht
 @app.callback(Output('enq-slider-3','value'),
