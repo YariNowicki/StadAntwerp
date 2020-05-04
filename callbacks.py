@@ -155,7 +155,7 @@ def display_leerlingen(value):
 def update_choropleth_mapbox_prediction(*vals):
     if vals[0] is not None:
         # Load prediction model
-        model = load_model('model/DashModel.h5')
+        model = load_model('model/r957mse5.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
             if v is not None:

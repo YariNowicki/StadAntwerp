@@ -7,7 +7,7 @@ import callbacks
 dc = DataCalls()
 snow = SnowFlakeCalls()
 
-chart = dc.weight_chart()
+'''chart = dc.weight_chart()'''
 df, d = snow.get_geo_data()
 df_pred = df.copy()
 df_pred = df_pred.reset_index()
@@ -123,9 +123,7 @@ main_layout = html.Div(
                             html.P("Leerlingen die naar een basisschool gaan binnen Antwerpen %", id="basis-0"),
                             dcc.Slider(id='basis-slider-0', min=0, max=100, step=0.01),
                             html.P("Leerlingen die naar een secundaire school gaan binnen Antwerpen %", id="so-a-0"),
-                            dcc.Slider(id='so-slider-0', min=0, max=100, step=0.01),
-                            html.P("Kotdichtheid %", id="kot-0"),
-                            dcc.Slider(id='kotdichtheid-input-0', min=0, max=100, step=0.01)
+                            dcc.Slider(id='so-slider-0', min=0, max=100, step=0.01)
                         ], style={'display': 'none'}),
                         html.Br(),
                         html.Br(),
@@ -182,7 +180,7 @@ main_layout = html.Div(
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [dcc.Graph(id="beste-indicatoren-chart", figure=chart)],
+                    [dcc.Graph(id="beste-indicatoren-chart")],
                     className="pretty_container five columns",
                 ),
             ],
@@ -289,7 +287,7 @@ model_layout = html.Div(
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [html.H2("Model accuratie"), html.Img(src="assets/download2.png", style={'width': '80%', 'height':'80%'})],
+                    [html.H2("Model accuratie"), dcc.Graph(DataCalls.get_accuracy())],
                     className="pretty_container five columns",
                 )
             ],

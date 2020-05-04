@@ -5,7 +5,6 @@ class Columns:
            'voorstelling_bezocht', 'sport_beoefend']
     opp = ['opp_sportterreinen', 'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen']
     plaatsen = ['plaatsen_buurtparkings','plaatsen_fietsenstallingen','plaatsen_velo_stations']
-    kot = ['kotdichtheid']
     so = ['al_so_binnen_a', 'al_so_buiten_a']
     basis = ['al_basis_binnen_a', 'al_basis_buiten_a']
     stroom = ['al_a_stroom', 'al_b_stroom']
@@ -35,21 +34,19 @@ class Columns:
                     'al_so_binnen_a',
                     'al_a_stroom',
                     'al_so_geen_vertraging',
-                    'kotdichtheid',
                     'plaatsen_buurtparkings',
                     'plaatsen_fietsenstallingen',
                     'plaatsen_velo_stations',
                     'opp_sportterreinen',
                     'opp_gebruiksgroen_en_pleinen',
                     'opp_speelterreinen']
-    input_columns = ['werkenden','belastingplichtigen',
+    input_columns = ['postcode','werkenden','belastingplichtigen',
                        'gemiddeld_netto_belastbaar_inkomen_per_persoon',
                        'opbrengst_aanvullende_personenbelasting_per_belast',
                        'dichtheid', 'bibliotheek_bezocht', 'boek_gelezen', 'museum_bezocht',
                        'park_bezocht', 'restaurant_of_cafe_bezocht', 'televisie_gekeken',
                        'voorstelling_bezocht', 'sport_beoefend', 'theorestisch_geschoolden', 'al_basis_binnen_a','al_so_binnen_a',
-                       'al_a_stroom','al_so_geen_vertraging',
-                       'kotdichtheid', 'plaatsen_buurtparkings',
+                       'al_a_stroom','al_so_geen_vertraging','plaatsen_buurtparkings',
                        'plaatsen_fietsenstallingen', 'plaatsen_velo_stations','opp_sportterreinen',
                        'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen']
     min_max_columns_input = ["choose-postcode",
@@ -71,7 +68,6 @@ class Columns:
                              "so-slider-0",
                              "stroom-slider-0",
                              "vertraging-slider-0",
-                             "kotdichtheid-input-0",
                              "plaatsen-input-0",
                              "plaatsen-input-1",
                              "plaatsen-input-2",
