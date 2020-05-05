@@ -34,21 +34,33 @@ class DataCalls:
         return df_inp['aantal_inwoners']
 
 
-    # TODO: Feature importance
-    '''
+    # TODO: Feature importance: "Individuele toebrengst bij een waarde van 1 (100%)"
     def weight_chart(self):
-        model2 = load_model('model/NewDashModel.h5')
-        weight = model2.get_weights()
-        df_weight = pd.DataFrame(weight[0])
+        values = [  5.3445067,  6.405532 , 10.086257 , 10.751836 ,  9.21963  ,
+                    8.687151 ,  8.410953 ,  2.2411668,  5.0256376,  9.957881 ,
+                    10.121722 ,  8.532995 , 10.114749 ,  4.348169 ,  6.762181 ,
+                    12.746373 , 11.036478 ,  9.031443 , 12.229608 ,
+                    9.355006 ]
+        columns = ['werkenden', 'belastingsplichtigen',
+                    'gemiddeld_netto_belastbaar_inkomen_per_persoon', 'dichtheid',
+                    'bibliotheek_bezocht', 'boek_gelezen', 'park_bezocht',
+                    'restaurant_of_cafe_bezocht', 'televisie_gekeken',
+                    'voorstelling_bezocht', 'sport_beoefend', 'theoretisch_geschoolden',
+                    'al_so_geen_vertraging', 'plaatsen_buurtparkings',
+                    'plaatsen_fietsenstallingen', 'plaatsen_velo_stations',
+                    'opp_sportterreinen', 'opp_gebruiksgroen_en_pleinen',
+                    'opp_speelterreinen',
+                    'school_binnen_antwerpen']
+        df_weight = pd.DataFrame(values)
         df_weight = df_weight.transpose()
-        df_weight.columns = Columns.input_columns
+        df_weight.columns = columns
         df_weight = df_weight.sort_values(axis=1, by=[0])
         fig = go.Figure()
         for column in df_weight.columns[-5:]:
             fig.add_trace(go.Bar(x=[column], y=[df_weight[column].loc[0]],name=column))
             fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
         return fig
-    '''
+    
 
     def get_accuracy(self):
         data = [[47.98647689819336, 31.554601669311523, 30.945764541625977, 51.00542449951172, 27.1306095123291, 

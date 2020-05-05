@@ -7,7 +7,7 @@ import callbacks
 dc = DataCalls()
 snow = SnowFlakeCalls()
 
-'''chart = dc.weight_chart()'''
+chart = dc.weight_chart()
 df, d = snow.get_geo_data()
 df_pred = df.copy()
 df_pred = df_pred.reset_index()
@@ -172,7 +172,7 @@ main_layout = html.Div(
                     className="pretty_container seven columns",
                 ),
                 html.Div(
-                    [dcc.Graph(id="beste-indicatoren-chart")],
+                    [dcc.Graph(id="beste-indicatoren-chart", figure=chart)],
                     className="pretty_container five columns",
                 ),
             ],
