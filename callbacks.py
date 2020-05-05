@@ -134,10 +134,6 @@ def display_leerlingen(value):
         data.append(r4)
     display = pd.DataFrame(data, columns=['naam', 'jaar', 'label', 'value'])
     df = display.copy()
-    '''
-    fig = px.sunburst(display, path=['naam', 'label'], values='value')
-    fig.update_layout(title="Status inwoners")
-    '''
     fig = px.sunburst(df, path=['naam','label'], values='value')
     fig.update_layout(title="Status inwoners (2016)")
     return fig
@@ -159,9 +155,9 @@ def update_choropleth_mapbox_prediction(*vals):
             else:
                 inputs.append(-1)
         inwoners = dc.get_inwoners(vals[1])
+        inputs[-7] = inputs[-7]/inwoners.values[0]
         inputs[-6] = inputs[-6]/inwoners.values[0]
         inputs[-5] = inputs[-5]/inwoners.values[0]
-        inputs[-4] = inputs[-4]/inwoners.values[0]
         inputs = dc.transfrom(inputs)
         inputs = get_encoding_data(vals[1], inputs)
         new_order = [13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,1,2,3,4,5,6,7,8,9,10,11,12,30]
