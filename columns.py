@@ -38,6 +38,14 @@ class Columns:
                      'al_so_geen_vertraging','plaatsen_buurtparkings',
                      'plaatsen_fietsenstallingen', 'plaatsen_velo_stations','opp_sportterreinen',
                      'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen','school_binnen_antwerpen']
+       prediction_columns = ['postcode','werkenden','belastingplichtigen',
+                     'gemiddeld_netto_belastbaar_inkomen_per_persoon',
+                     'dichtheid', 'bibliotheek_bezocht', 'boek_gelezen',
+                     'park_bezocht', 'restaurant_of_cafe_bezocht', 'televisie_gekeken',
+                     'voorstelling_bezocht', 'sport_beoefend', 'theorestisch_geschoolden',
+                     'al_so_geen_vertraging','school_binnen_antwerpen','plaatsen_buurtparkings',
+                     'plaatsen_fietsenstallingen', 'plaatsen_velo_stations','opp_sportterreinen',
+                     'opp_gebruiksgroen_en_pleinen', 'opp_speelterreinen','fiets_percentage','datum','tijd']
        min_max_columns_input = ["choose-postcode",
                             "werk-slider-0",
                             "belast-slider-0",
@@ -59,6 +67,10 @@ class Columns:
                             "opp-slider-1",
                             "opp-slider-2",
                             "school-slider-0"]
+       percentage_display = ['werkenden','belastingplichtigen', 'bibliotheek_bezocht', 'boek_gelezen',
+                     'park_bezocht', 'restaurant_of_cafe_bezocht', 'televisie_gekeken',
+                     'voorstelling_bezocht', 'sport_beoefend', 'theorestisch_geschoolden',
+                     'al_so_geen_vertraging','school_binnen_antwerpen']
        total_columns = ['postcode','werkenden',
               'belastingplichtigen',
               'gemiddeld_netto_belastbaar_inkomen_per_persoon',

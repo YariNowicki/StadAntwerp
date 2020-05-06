@@ -11,6 +11,7 @@ import plotly.express as px
 import warnings
 import statistics
 import plotly.graph_objects as go
+from snow_calls import SnowFlakeCalls
 warnings.simplefilter(action='ignore', category=FutureWarning)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
@@ -146,14 +147,17 @@ def display_leerlingen(value):
               [State("{}".format(_), "value") for _ in Columns.min_max_columns_input])
 def update_choropleth_mapbox_prediction(*vals):
     if vals[0] is not None:
+        pred = [vals[1]]
         # Load prediction model
         model = load_model('model/r957mse5.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
             if v is not None:
+                pred.append(v)
                 inputs.append(v)
             else:
                 inputs.append(-1)
+                pred.append(-1)      
         inwoners = dc.get_inwoners(vals[1])
         inputs[-7] = inputs[-7]/inwoners.values[0]
         inputs[-6] = inputs[-6]/inwoners.values[0]
@@ -161,98 +165,46 @@ def update_choropleth_mapbox_prediction(*vals):
         inputs = dc.transfrom(inputs)
         inputs = get_encoding_data(vals[1], inputs)
         new_order = [13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,1,2,3,4,5,6,7,8,9,10,11,12,30]
+        pred_index = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,20,14,15,16,17,18,19]
+        pred = [pred[i] for i in pred_index]
         inputs = inputs[new_order]
         preds = model.predict(inputs.reshape(1,-1))  # Predicts for each postcode
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
+        pred.append(preds[0][0])
+        snow.save_prediction(pred)
         # Generates map with the prediction values
         fig = create_map(df_pred)
         return fig
     else:
         return initialize_map()
 
-
-def get_ci(z):
-    box_data = []
-    for c in df_weight.columns:
-        ci_minus = df_weight[c].mean() - (z * (statistics.stdev(df_weight[c].tolist())/10))
-        ci_max = df_weight[c].mean() + (z * (statistics.stdev(df_weight[c].tolist())/10))
-        mean = df_weight[c].mean()
-        box_data.append([c, ci_minus, mean, ci_max])
-    df_ci = pd.DataFrame(box_data, columns=['indicator', 'ci_min', 'waarde', 'ci_max'])
-    df_ci = df_ci.sort_values(by=['waarde']).reset_index()
-    df_ci = df_ci.drop(['index'], axis=1)
-    df_ci['difference'] = df_ci['ci_max'] - df_ci['waarde']
-    
-    df_ci = df_ci.reset_index()
-    return df_ci
-
-
-def get_z(perc):
-    z = 0
-    if perc == 90:
-        z = 1.645
-    elif perc == 95:
-        z = 1.96
-    elif perc == 98:
-        z = 2.326
-    elif perc == 99:
-        z = 2.576
-    return z
-
-# Main graph
+# Prediction graph
 @app.callback(Output('main_graph','figure'),
-              [Input('year-slider', 'value')])
-def sign_bad(value):
-    z = get_z(value[0]) 
-    if z != 0:
-        df = get_ci(z)
-    fig = px.scatter(df[:3], x="indicator", y="waarde", color="indicator",
-                 error_y="difference", error_y_minus="difference")
-    fig.update_layout(
-        width = 800,
-        height = 500,
-        title = "Betrouwbaarheid van de meest negatieve indicatoren",
-        showlegend=True,
-        yaxis = dict(
-        scaleanchor = "x",
-        scaleratio = 1,
-        ),
-        xaxis= dict(
-            autorange=True,
-            showgrid=False,
-            ticks='',
-            showticklabels=False
-        ),
-    )
+              [Input('output-clientside', 'children')])
+def dot_plot_predictions(s):
+    s = SnowFlakeCalls()
+    df = s.get_predictions()
+    df['postcode'] = df['postcode'].astype(str)
+    fig = px.scatter(df, x="postcode", y="fiets_percentage",
+                title="Predicties")
     return fig
 
-
-# Pie graph
+# Prediction graph
 @app.callback(Output('pie_graph','figure'),
-              [Input('year-slider', 'value')])
-def sign_bad(value):
-    z = get_z(value[0]) 
-    if z != 0:
-        df = get_ci(z)  
-    fig = px.scatter(df.reset_index()[-3:], x="indicator", y="waarde", color="indicator",
-                 error_y="difference", error_y_minus="difference")
-    fig.update_layout(
-        width = 800,
-        height = 500,
-        title = "Betrouwbaarheid van de meest positieve indicatoren",
-        showlegend=False,
-        yaxis = dict(
-        scaleanchor = "x",
-        scaleratio = 1,
-        ),
-        xaxis= dict(
-            autorange=True,
-            showgrid=False,
-            ticks='',
-            showticklabels=False
-        )
-    )
+              [Input('main_graph', 'hoverData')])
+def dot_plot_predictions(s):
+    postcode = s['points'][0]['x']
+    fiets = s['points'][0]['y']
+    s = SnowFlakeCalls()
+    df = s.get_predictions()
+    df['postcode'] = df['postcode'].astype(str)
+    df = df[(df['postcode'] == str(postcode)) & (df['fiets_percentage'] == fiets)].head(1)
+    fig = go.Figure()
+    for c in Columns.percentage_display:
+        fig.add_trace(go.Bar(x=[c],y=df[c]))
+    fig.update_layout(showlegend=False, title='Indicatoren')
     return fig
+
     
 
 # Button inwoners

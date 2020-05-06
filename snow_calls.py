@@ -3,7 +3,7 @@ import os
 import snowflake.connector
 import json
 from columns import Columns
-
+from datetime import datetime 
 
 def login():
     ctx = snowflake.connector.connect(
@@ -16,9 +16,6 @@ def login():
     cs = ctx.cursor()
     return cs
 
-
-
-
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
@@ -29,6 +26,7 @@ class SnowFlakeCalls:
     SCHOOL_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.SCHOOL_LEERLINGEN"
     INWONER_STATUS_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.INWONER_STATUS"
     SCALE_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.SCALE_DATA"
+    PREDICTION_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.PREDICTIONS"
 
     def get_geo_data(self):
         print("Getting snowflake data...(geo data)")
@@ -142,6 +140,25 @@ class SnowFlakeCalls:
         df = pd.DataFrame(data, columns=['postcode', 'jaar','loontrekkenden', 'werkzoekenden','zelfstandigen','inactieven'])
         df = df[df['postcode'].isin(postcodes)]
         df = self.apply_names(df)
+        return df
+
+    def save_prediction(self, inputs):
+        cs = login()
+        now = datetime.now() 
+        Q = "INSERT INTO DEMO_ANTWERP_CITY.DEMO_DV_BV.PREDICTIONS SELECT "
+        for i in inputs:
+            Q = Q + str(i) + ", "
+        date = str(now).split()
+        Q = Q + "'{}', '{}'".format(date[0],date[1])
+        Q = Q + ";"
+        cs.execute(Q)
+        return "Done"
+
+    def get_predictions(self):
+        cs = login()
+        cs.execute(self.PREDICTION_QUERY)
+        data = cs.fetchall()
+        df = pd.DataFrame(data, columns=Columns.prediction_columns)
         return df
 
     def apply_names(self, df):

@@ -4,6 +4,22 @@ import dash_core_components as dcc
 import dash_html_components as html
 from snow_calls import SnowFlakeCalls
 import callbacks
+
+def update_point(trace, points, selector):
+        c = list(scatter.marker.color)
+        s = list(scatter.marker.size)
+        print(trace)
+        print(points)
+        print(selector)
+        for i in points.point_inds:
+            c[i] = '#bae2be'
+            s[i] = 20
+            with f.batch_update():
+                scatter.marker.color = c
+                scatter.marker.size = s
+
+
+
 dc = DataCalls()
 snow = SnowFlakeCalls()
 
@@ -19,6 +35,8 @@ px.set_mapbox_access_token(mapbox_token)
 
 fig = callbacks.create_map(df_pred)
 
+scatter = fig.data[0]
+scatter.on_click(update_point)
 
 # Create app layout
 main_layout = html.Div(
@@ -245,36 +263,6 @@ model_layout = html.Div(
         html.Div(
             [
                 html.Div(
-                    [
-                        html.P(
-                            "Betrouwbaarheid",
-                            className="control_label",
-                            id="sign-label"
-                        ),
-                        dcc.RangeSlider(
-                            id="year-slider",
-                            min=90,
-                            max=100,
-                            step=None,
-                            marks={
-                                90: '90%',
-                                95: '95%',
-                                98: '98%',
-                                99: '99%'
-                            },
-                            value=[95],
-                            className="dcc_control",
-                        ),
-                    ],
-                    className="pretty_container four columns",
-                    id="cross-filter-options",
-                )
-            ],
-            className="row flex-display",   
-        ),
-        html.Div(
-            [
-                html.Div(
                     [dcc.Graph(id="main_graph")],
                     className="pretty_container seven columns",
                 ),
@@ -290,11 +278,7 @@ model_layout = html.Div(
                 html.Div(
                     [dcc.Graph(id="pie_graph")],
                     className="pretty_container seven columns",
-                ),
-                html.Div(
-                    [dcc.Graph(id="aggregate_graph")],
-                    className="pretty_container five columns",
-                ),
+                )
             ],
             className="row flex-display",
         ),

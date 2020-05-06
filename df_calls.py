@@ -4,6 +4,7 @@ from columns import Columns
 from snow_calls import SnowFlakeCalls
 import warnings
 import plotly.graph_objects as go
+import plotly.express as px
 from keras.models import load_model
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -73,3 +74,4 @@ class DataCalls:
         fig.add_trace(go.Scatter(y=data[1], x=list(range(len(data[1]))), name='Actual values',
                                 line = dict(color='green')))
         return fig
+
