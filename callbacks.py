@@ -18,7 +18,7 @@ px.set_mapbox_access_token(mapbox_token)
 
 dc = DataCalls()
 snow = SnowFlakeCalls()
-df_weight = pd.read_csv('assets/weights.csv')
+df_weight = pd.read_csv('/home/ubuntu/StadAntwerpen/assets/weights.csv')
 df, d = snow.get_geo_data()
 df_pred = df.copy()
 df_pred = df_pred.reset_index()
@@ -149,7 +149,7 @@ def update_choropleth_mapbox_prediction(*vals):
     if vals[0] is not None:
         pred = [vals[1]]
         # Load prediction model
-        model = load_model('model/r957mse5.h5')
+        model = load_model('/home/ubuntu/StadAntwerpen/model/r957mse5.h5')
         inputs = []  # Placeholder to later place the list as a row in the DataFrame
         for v in vals[2:]:  # Loops over all the inputs and converts them to a single list
             if v is not None:
