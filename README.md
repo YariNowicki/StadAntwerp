@@ -13,6 +13,7 @@
 9. scikit-learn 0.22.2
 10. snowflake-connector-python 2.2.2
 11. tensorflow 1.14.0
+12. asn1crypto 0.24.0
 
 ## Project structure
 
