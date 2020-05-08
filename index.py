@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
