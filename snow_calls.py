@@ -145,7 +145,7 @@ class SnowFlakeCalls:
     def save_prediction(self, inputs):
         cs = login()
         now = datetime.now() 
-        Q = "INSERT INTO DEMO_ANTWERP_CITY.DEMO_DV_BV.PREDICTIONS SELECT "
+        Q = "INSERT INTO DEMO_ANTWERP_CITY.PRED_DATA.PREDICTIONS SELECT "
         for i in inputs:
             Q = Q + str(i) + ", "
         date = str(now).split()
