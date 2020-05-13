@@ -198,8 +198,10 @@ class SnowFlakeCalls:
             print(item)
             file1 = open(item)
             line = file1.readline()
+            print('line: ' + str(line))
             while line:
                 line = line.replace("\n", "")
+                print('line replaced: ' + str(line))
                 with open(line, 'r', encoding='utf-8') as f:
                     try:
                         for cur in ctx.execute_stream(f):
