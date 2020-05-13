@@ -196,20 +196,12 @@ class SnowFlakeCalls:
         ]
         for item in files:
             print(item)
-            file1 = open(item)
-            line = file1.readline()
-            print('line: ' + str(line))
-            while line:
-                line = line.replace("\n", "")
-                print('line replaced: ' + str(line))
-                with open(line, 'r', encoding='utf-8') as f:
-                    try:
-                        for cur in ctx.execute_stream(f):
-                            for ret in cur:
-                                print(ret)
-                    except Exception as e: pass
-                print(str(line))
-                line = file1.readline()
+            with open(item, 'r', encoding='utf-8') as f:
+                try:
+                    for cur in ctx.execute_stream(f):
+                        for ret in cur:
+                            print(ret)
+                except Exception as e: pass
         print('Datavault updated!')
 
 
