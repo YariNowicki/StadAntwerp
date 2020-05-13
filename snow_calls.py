@@ -185,7 +185,16 @@ class SnowFlakeCalls:
 
     def update_datavault(self):
         cs, ctx = login_dv()
-        for item in os.listdir("/home/ubuntu/StadAntwerp/SQL/"):
+        files = [
+            '/home/ubuntu/StadAntwerp/SQL/1_EXT_PRED_PREDICTIONS_INCR.sql',
+            '/home/ubuntu/StadAntwerp/SQL/2_STG_PRED_PREDICTIONS_INCR.sql',
+            '/home/ubuntu/StadAntwerp/SQL/3_HUB_PRED_PREDICTIONS_INCR.sql',
+            '/home/ubuntu/StadAntwerp/SQL/4_LNK_PRED_PREDICTIONS_POSTZONES_INCR.sql',
+            '/home/ubuntu/StadAntwerp/SQL/5_SAT_TEMP_TGT.sql',
+            '/home/ubuntu/StadAntwerp/SQL/6_SAT_INUR_TGT.sql',
+            '/home/ubuntu/StadAntwerp/SQL/7_SAT_ED_TGT.sql',
+        ]
+        for item in files:
             print(item)
             file1 = open(item)
             line = file1.readline()
