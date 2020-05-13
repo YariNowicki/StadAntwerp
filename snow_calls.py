@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import snowflake.connector
+from codecs import open  # File reader/writes
 import json
 from columns import Columns
 from datetime import datetime 
@@ -15,6 +16,17 @@ def login():
         database='DEMO_ANTWERP_CITY')
     cs = ctx.cursor()
     return cs
+
+def login_dv():
+    ctx = snowflake.connector.connect(
+        user='YNOWICKI',
+        password=os.getenv('SNOWSQL_PWD'),
+        account='datasense.eu-west-1',
+        warehouse='SMALL_WH',
+        role='MOBILITY_ANTWERP',
+        database='DEMO_ANTWERP_CITY')
+    cs = ctx.cursor()
+    return cs, ctx
 
 class SnowFlakeCalls:
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
@@ -170,4 +182,23 @@ class SnowFlakeCalls:
             return "NOT FOUND"
         df['naam'] = df.apply(f, axis=1)
         return df
+
+    def update_datavault(self):
+        cs, ctx = login_dv()
+        for item in os.listdir("./SQL/"):
+            print(item)
+            file1 = open(item)
+            line = file1.readline()
+            while line:
+                line = line.replace("\n", "")
+                with open(line, 'r', encoding='utf-8') as f:
+                    try:
+                        for cur in ctx.execute_stream(f):
+                            for ret in cur:
+                                print(ret)
+                    except Exception as e: pass
+                print(str(line))
+                line = file1.readline()
+        print('Datavault updated!')
+
 

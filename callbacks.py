@@ -172,6 +172,8 @@ def update_choropleth_mapbox_prediction(*vals):
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
         pred.append(preds[0][0])
         snow.save_prediction(pred)
+        print('updating datavault...')
+        snow.update_datavault()
         # Generates map with the prediction values
         fig = create_map(df_pred)
         return fig
