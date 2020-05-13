@@ -185,7 +185,7 @@ class SnowFlakeCalls:
 
     def update_datavault(self):
         cs, ctx = login_dv()
-        for item in os.listdir("./SQL/"):
+        for item in os.listdir("ubuntu/home/StadAntwerp/SQL/"):
             print(item)
             file1 = open(item)
             line = file1.readline()
