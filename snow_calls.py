@@ -29,15 +29,25 @@ def login_dv():
     return cs, ctx
 
 class SnowFlakeCalls:
+    # Gets geojson file
     JSON_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.GEO_POSTZONES"
+    # Gets the dataframe that is used with the geojson file to display a map
     DF_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DISPLAY_SHAPES"
+    # Gets data to fill the dropdown list (root page)
     DROPDOWN_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DROPDOWN_LIST"
+    # Gets data to fill input sliders (root page)
     INPUT_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.DASH_INPUT"
+    # Gets total inwoners from every postzone of the last year
     INWONERS_QUERY = "select postzone, aantal_inwoners from DEMO_ANTWERP_CITY.DEMO_DV_BV.INPUT_DATA WHERE jaar = 2020"
+    # Gets fietsgebruik from all years (2000-2018)
     FIETSGEBRUIK_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.FIETSGEBRUIK"
+    # Gets information about the % of students that go to a school inside Antwerp
     SCHOOL_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.SCHOOL_LEERLINGEN"
+    # Gets information about the status of inwoners of every postzone
     INWONER_STATUS_QUERY = "select * from DEMO_ANTWERP_CITY.DEMO_DV_BV.INWONER_STATUS"
+    # Gets the data that was used the train the model so it can be used to min max scale the input data
     SCALE_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.SCALE_DATA"
+    # Gets the previous prediction data
     PREDICTION_QUERY = "SELECT * FROM DEMO_ANTWERP_CITY.DEMO_DV_BV.PREDICTIONS"
 
     def get_geo_data(self):
@@ -154,6 +164,7 @@ class SnowFlakeCalls:
         df = self.apply_names(df)
         return df
 
+    # Creates query and saves it in the datasource
     def save_prediction(self, inputs):
         cs = login()
         now = datetime.now() 
@@ -166,6 +177,7 @@ class SnowFlakeCalls:
         cs.execute(Q)
         return "Done"
 
+    # Returns predictions to the predictive page
     def get_predictions(self):
         cs = login()
         cs.execute(self.PREDICTION_QUERY)
@@ -173,6 +185,7 @@ class SnowFlakeCalls:
         df = pd.DataFrame(data, columns=Columns.prediction_columns)
         return df
 
+    # Applies names for desciptive page
     def apply_names(self, df):
         names = self.get_dropdown_list()
         def f(row):
@@ -183,6 +196,7 @@ class SnowFlakeCalls:
         df['naam'] = df.apply(f, axis=1)
         return df
 
+    # Updates the data vault by executing SQL files
     def update_datavault(self):
         cs, ctx = login_dv()
         files = [

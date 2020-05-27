@@ -8,34 +8,40 @@ import plotly.express as px
 from keras.models import load_model
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+# Functions that get called from the callbacks/layout, it's the middleground between layout/callbacks and snowflake queries (SnowFlakeCalls)
 class DataCalls:
     snow = SnowFlakeCalls()
     df = snow.get_input_data()
     df['school_binnen_antwerpen'] = df[['al_basis_binnen_a', 'al_so_binnen_a']].mean(axis=1)
+    # Drop columns that are not needed
     df = df.drop(['al_basis_binnen_a', 'al_so_binnen_a','al_a_stroom','opbrengst_aanvullende_personenbelasting_per_belast','opbrengst_aanvullende_personenbelasting_per_belast'], axis=1)
     inputs = df[Columns.input_columns]
+    #Scales data properly like the model is trained
     min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 1))  # puts everything in a range between 0 and 1
     min_max_scaler.fit(inputs)
 
     def __init__(self):
         pass
 
+    # Fills up input sliders of the application when a postcode is selected
     def get_inp_data(self, postcode):
         df_inp = self.df.copy()
         df_inp = df_inp[df_inp['postcode'] == postcode]
         df_inp = df_inp[Columns.input_columns]
         return df_inp.iloc[-5] 
 
+    # Performs minmax scaling for the input when a prediction is made in the application
     def transfrom(self, inp):
         return self.min_max_scaler.transform([inp])
 
+    # Gets the 'inwoners' (descriptive page)
     def get_inwoners(self, postcode):
         df_inp = self.snow.get_inwoners()
         df_inp = df_inp[df_inp['postcode'] == postcode]
         return df_inp['aantal_inwoners']
 
 
-    # TODO: Feature importance: "Individuele toebrengst bij een waarde van 1 (100%)"
+    # Create most important indicators graph (root page) 
     def weight_chart(self):
         values = [  5.3445067,  6.405532 , 10.086257 , 10.751836 ,  9.21963  ,
                     8.687151 ,  8.410953 ,  2.2411668,  5.0256376,  9.957881 ,
@@ -57,12 +63,13 @@ class DataCalls:
         df_weight.columns = columns
         df_weight = df_weight.sort_values(axis=1, by=[0])
         fig = go.Figure()
+        # Graph is made by adding 1 value at a time
         for column in df_weight.columns[-5:]:
             fig.add_trace(go.Bar(x=[column], y=[df_weight[column].loc[0]],name=column))
             fig.update_layout(title='Meest invloedrijke indicatoren',showlegend=False)
         return fig
     
-
+    # Shows the accuracy in the model page according to the results of the test data (predicted vs actual values)
     def get_accuracy(self):
         data = [[47.98647689819336, 31.554601669311523, 30.945764541625977, 51.00542449951172, 27.1306095123291, 
                 59.93107604980469, 50.98125457763672, 41.13679504394531, 35.689308166503906, 32.51605987548828, 

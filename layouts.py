@@ -5,6 +5,7 @@ import dash_html_components as html
 from snow_calls import SnowFlakeCalls
 import callbacks
 
+# Used to upgrade the graph (model page) that display some inputs values of the prediction
 def update_point(trace, points, selector):
         c = list(scatter.marker.color)
         s = list(scatter.marker.size)
@@ -28,11 +29,11 @@ df, d = snow.get_geo_data()
 df_pred = df.copy()
 df_pred = df_pred.reset_index()
 df_pred = df_pred.drop(['index'], axis=1)
-
+# Token to display the map Antwerpen (root page)
 mapbox_token = "pk.eyJ1IjoieWFyaW5vd2lja2kiLCJhIjoiY2s3dTk4ZDV6MDE0dDNvbW93NXBjNTZ5bSJ9.6tGy4sJsG0DOBXsEiXmPEA"
 px.set_mapbox_access_token(mapbox_token)
 
-
+# Creates the map antwerpen (root page)
 fig = callbacks.create_map(df_pred)
 
 scatter = fig.data[0]
@@ -202,7 +203,7 @@ main_layout = html.Div(
     style={"display": "flex", "flex-direction": "column"},
 )
 
-
+# Model layout
 model_layout = html.Div(
     [
         dcc.Store(id="aggregate_data"),
@@ -287,6 +288,7 @@ model_layout = html.Div(
     style={"display": "flex", "flex-direction": "column"},
 )
 
+# Descriptive layout
 descriptive_layout = html.Div(
     [
         dcc.Store(id="aggregate_data"),

@@ -88,7 +88,7 @@ def create_map(df_pred):
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0}, title='Antwerpen')
     return fig
 
-
+# Displays fietsers (descriptive graph)
 @app.callback(Output('fiets-graph', 'figure'),
               [Input('postcode-dropdown', 'value')])
 def display_fietsgebruik(value):
@@ -98,6 +98,7 @@ def display_fietsgebruik(value):
     fig.update_layout(title='% regelmatige fietsgebruikers naar het werk/school')
     return fig
 
+# Displays inwoners (descriptive graph)
 @app.callback(Output('inwoners-graph', 'figure'),
               [Input('postcode-dropdown', 'value')])
 def display_inwoners(value):
@@ -106,7 +107,7 @@ def display_inwoners(value):
     fig.update_layout(title='Aantal inwoners')
     return fig
 
-
+# Descriptive graph
 @app.callback(Output('leerlingen-graph', 'figure'),
               [Input('postcode-dropdown', 'value')])
 def display_leerlingen(value):
@@ -118,7 +119,7 @@ def display_leerlingen(value):
     fig.update_layout(title="% Leerlingen die naar school gaan binnen Antwerpen (2018)")
     return fig
 
-
+# Descriptive Graph
 @app.callback(Output('status-graph', 'figure'),
               [Input('postcode-dropdown', 'value')])
 def display_leerlingen(value):
@@ -159,15 +160,22 @@ def update_choropleth_mapbox_prediction(*vals):
                 inputs.append(-1)
                 pred.append(-1)      
         inwoners = dc.get_inwoners(vals[1])
+        
+        # Changes totaal parkings spaces to parking spaces/total inwoners
         inputs[-7] = inputs[-7]/inwoners.values[0]
         inputs[-6] = inputs[-6]/inwoners.values[0]
         inputs[-5] = inputs[-5]/inwoners.values[0]
+        
+        # Minmaxscaling
         inputs = dc.transfrom(inputs)
         inputs = get_encoding_data(vals[1], inputs)
+        
+        # Converts lists to the right order
         new_order = [13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,0,1,2,3,4,5,6,7,8,9,10,11,12,30]
         pred_index = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,20,14,15,16,17,18,19]
         pred = [pred[i] for i in pred_index]
         inputs = inputs[new_order]
+
         preds = model.predict(inputs.reshape(1,-1))  # Predicts for each postcode
         df_pred.at[get_key(int(vals[1])), 'fiets_naar_werk_school'] = preds[0][0]
         pred.append(preds[0][0])

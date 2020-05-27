@@ -9,12 +9,13 @@ from app import app
 from layouts import main_layout, model_layout, descriptive_layout
 import callbacks
 
+# It's needed to define a layout before the routing
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     html.Div(id='page-content')
 ])
 
-
+# Routing of the website
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
@@ -27,6 +28,6 @@ def display_page(pathname):
     else:
         return '404'
 
-
+# Host 0.0.0.0 to make sure to webstie is accesible from outside
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0')

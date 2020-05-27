@@ -1,3 +1,4 @@
+# Used to call column names so the other files are cleaner to read
 class Columns:
        display = ['postcode', 'jaar', 'fiets_naar_werk_school', 'naam', 'shape_area', 'shape_length']
        enq = ['bibliotheek_bezocht', 'boek_gelezen', 'museum_bezocht', 'park_bezocht',
