@@ -48,4 +48,4 @@ These models make the predictions, only r957mse5.h5 is used at the moment.
 Contains files (images, javascript, css) that are used in the application.
 
 ### Environment.yml
-Contains a list of a the packages in the used environment with their used versions.
+Contains a list of a the packages in the used environment with their used versions. Normally you can use this file to build an environemt with these exact packages. If this doesn't work you should manually create a new environment and install the packages that are listed at the top of the ReadMe manually in the right order.
