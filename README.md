@@ -37,3 +37,15 @@ Used to group functions in a single file, so the functions are not all in differ
 
 ### snow_calls.py
 The functions that receive data from snowflake.
+
+### SQL Files
+These files are used to include new predictions into the data vault model.
+
+### H5 Models
+These models make the predictions, only r957mse5.h5 is used at the moment.
+
+### Assets
+Contains files (images, javascript, css) that are used in the application.
+
+### Environment.yml
+Contains a list of a the packages in the used environment with their used versions.
