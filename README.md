@@ -24,7 +24,7 @@ This separation is required to avoid circular imports: the files containing the 
 This python file is used to start the webpage, it loads different pages and imports their callbacks
 
 ### callbacks.py
-All the callbacks of both the pages are placed here. A callback is a function, triggerd when one of their inputs change. It automatically updates the output. (More info: https://dash.plotly.com/basic-callbacks)
+All the callbacks of both the pages are placed here. A callback is a function, triggerd when one of their inputs change. It automatically updates the output. (More info: https://dash.plotly.com/basic-callbacks and even more info: https://dash.plotly.com/interactive-graphing)
 
 ### layouts.py
 All the layouts get created here.
