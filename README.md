@@ -29,11 +29,11 @@ All the callbacks of both the pages are placed here. A callback is a function, t
 ### layouts.py
 All the layouts get created here.
 
-### columns.py (needs an update, but it works at the moment)
+### columns.py
 Extra file, filled with array that contains column names. --> Makes the other files cleaner.
 
 ### df_calls.py
-Used to group functions, so the functions are not all in different places.
+Used to group functions in a single file, so the functions are not all in different places.
 
 ### snow_calls.py
 The functions that receive data from snowflake.
